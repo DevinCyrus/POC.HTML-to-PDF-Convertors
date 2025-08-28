@@ -3,7 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POC.HTML-to-PDF-Convertors", "POC.HTML-to-PDF-Convertors.csproj", "{A947E373-313E-4867-9449-74540F6ED3DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "POC.HTML-to-PDF-Convertors", "POC.HTML-to-PDF-Convertors.csproj", "{A947E373-313E-4867-9449-74540F6ED3DC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Artifacts", "Artifacts", "{A7C2C2DB-17A1-41E6-AAE5-BBFD5980A1F5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{D18DDB8D-BAEF-4439-B7A6-348F385830AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronPDF.Service", "..\PDForgePlayWrite.Service\IronPDF.Service.csproj", "{EB96F923-49B1-455F-80FF-4E3100326749}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "..\Core\Core.csproj", "{D8381575-A07D-41B7-8C34-F7DC996E634F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{55733D28-F443-4CF6-A56E-E3C796AAC1A3}"
+	ProjectSection(SolutionItems) = preProject
+		HtmlToPdfConverterFactory.cs = HtmlToPdfConverterFactory.cs
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +28,23 @@ Global
 		{A947E373-313E-4867-9449-74540F6ED3DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A947E373-313E-4867-9449-74540F6ED3DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A947E373-313E-4867-9449-74540F6ED3DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB96F923-49B1-455F-80FF-4E3100326749}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB96F923-49B1-455F-80FF-4E3100326749}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB96F923-49B1-455F-80FF-4E3100326749}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB96F923-49B1-455F-80FF-4E3100326749}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8381575-A07D-41B7-8C34-F7DC996E634F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8381575-A07D-41B7-8C34-F7DC996E634F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8381575-A07D-41B7-8C34-F7DC996E634F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8381575-A07D-41B7-8C34-F7DC996E634F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A947E373-313E-4867-9449-74540F6ED3DC} = {A7C2C2DB-17A1-41E6-AAE5-BBFD5980A1F5}
+		{EB96F923-49B1-455F-80FF-4E3100326749} = {55733D28-F443-4CF6-A56E-E3C796AAC1A3}
+		{D8381575-A07D-41B7-8C34-F7DC996E634F} = {D18DDB8D-BAEF-4439-B7A6-348F385830AE}
+		{55733D28-F443-4CF6-A56E-E3C796AAC1A3} = {D18DDB8D-BAEF-4439-B7A6-348F385830AE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E223DFD5-3D9E-438B-9B72-ECD3D5D17278}
