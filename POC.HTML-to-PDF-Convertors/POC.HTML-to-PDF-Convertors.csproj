@@ -8,7 +8,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="MockData\finops-report.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="MockData\finops-report.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\PDForgePlayWrite.Service\IronPDF.Service.csproj" />
   </ItemGroup>
 
 </Project>
