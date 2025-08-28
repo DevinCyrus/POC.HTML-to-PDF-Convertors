@@ -1,0 +1,47 @@
+# Build results
+bin/
+obj/
+Debug/
+Release/
+*.exe
+*.dll
+*.pdb
+*.app
+
+# Visual Studio / Rider / IDE files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.idea/
+
+# NuGet packages
+*.nupkg
+packages/
+.nuget/
+
+# Rider caches
+.idea/
+*.iml
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Visual Studio Code
+.vscode/
+
+# Resharper
+_ReSharper*/
+*.ReSharper*
+
+# Logs
+*.log
+
+# Test results
+TestResults/
+*.trx
+
+# Publish output
+publish/
