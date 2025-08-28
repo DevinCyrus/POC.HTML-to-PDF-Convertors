@@ -1,0 +1,6 @@
+@POC.HTML_to_PDF_Convertors_HostAddress = http://localhost:5136
+
+GET {{POC.HTML_to_PDF_Convertors_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
