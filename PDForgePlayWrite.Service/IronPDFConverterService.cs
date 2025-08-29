@@ -17,9 +17,12 @@ public class IronPDFConverterService : IHtmlToPdfConverter
 		//// etc...
 	}
 
-	public byte[] ConvertFromHTMLFile(string file)
+	public async Task<byte[]> ConvertFromHTMLFile(string filePath)
 	{
-		var pdf = _renderer.RenderHtmlFileAsPdf(file);
-		return pdf.BinaryData;
+		return await Task.Run(() =>
+		{
+			var pdf = _renderer.RenderHtmlFileAsPdf(filePath);
+			return pdf.BinaryData;
+		});
 	}
 }

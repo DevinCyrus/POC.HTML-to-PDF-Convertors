@@ -2,5 +2,5 @@
 
 public interface IHtmlToPdfConverter
 {
-	byte[] ConvertFromHTMLFile(string file);
+	Task<byte[]> ConvertFromHTMLFile(string filePath);
 }

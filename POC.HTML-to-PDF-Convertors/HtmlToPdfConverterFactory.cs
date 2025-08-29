@@ -1,5 +1,6 @@
 ﻿using Core.Services.Contracts;
 using PDForgePlayWrite.Service;
+using Puppeteer.Service;
 
 public class HtmlToPdfConverterFactory : IHtmlToPdfConverterFactory
 {
@@ -15,6 +16,7 @@ public class HtmlToPdfConverterFactory : IHtmlToPdfConverterFactory
 		return engineName.ToLower() switch
 		{
 			"ironpdf" => _serviceProvider.GetRequiredService<IronPDFConverterService>(),
+			"puppeteer" => _serviceProvider.GetRequiredService<PuppeteerConverterService>(),
 			_ => throw new ArgumentException($"Unknown engine {engineName}")
 		};
 	}

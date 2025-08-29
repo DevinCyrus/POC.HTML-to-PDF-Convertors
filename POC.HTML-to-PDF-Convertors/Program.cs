@@ -1,5 +1,6 @@
 using Core.Services.Contracts;
 using PDForgePlayWrite.Service;
+using Puppeteer.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IronPDFConverterService>();
+builder.Services.AddScoped<PuppeteerConverterService>();
 builder.Services.AddScoped<IHtmlToPdfConverterFactory, HtmlToPdfConverterFactory>();
 
 var app = builder.Build();
