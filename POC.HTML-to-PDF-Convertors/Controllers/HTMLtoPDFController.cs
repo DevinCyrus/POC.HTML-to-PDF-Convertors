@@ -38,4 +38,14 @@ public class HTMLtoPDFController : ControllerBase
 		var pdfBytes = await converter.ConvertFromHTMLFile(_testReportPath);
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
 	}
+
+	// Hiding endpoint SelectPDF cannot handle dynamic javascript
+
+	//[HttpGet("SelectPDFSDK/{outputFileName}")]
+	//public async Task<IActionResult> GetSelectPDFGeneratedPDF([FromRoute] string outputFileName)
+	//{
+	//	var converter = _factory.Get("selectpdf");
+	//	var pdfBytes = await converter.ConvertFromHTMLFile(_testReportPath);
+	//	return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
+	//}
 }

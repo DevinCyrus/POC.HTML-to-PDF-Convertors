@@ -26,6 +26,7 @@
     <ProjectReference Include="..\PDForgePlaywright.Service\MicrosoftPlaywright.Service.csproj" />
     <ProjectReference Include="..\PDForgePlayWrite.Service\IronPDF.Service.csproj" />
     <ProjectReference Include="..\Puppeteer.Service\Puppeteer.Service.csproj" />
+    <ProjectReference Include="..\SelectPDF.Service\SelectPDF.Service.csproj" />
   </ItemGroup>
 
 </Project>
