@@ -1,4 +1,5 @@
 using Core.Services.Contracts;
+using MicrosoftPlaywright.Service;
 using PDForgePlayWrite.Service;
 using Puppeteer.Service;
 
@@ -13,6 +14,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IronPDFConverterService>();
 builder.Services.AddScoped<PuppeteerConverterService>();
+builder.Services.AddScoped<MicrosoftPlaywrightConverterService>();
 builder.Services.AddScoped<IHtmlToPdfConverterFactory, HtmlToPdfConverterFactory>();
 
 var app = builder.Build();

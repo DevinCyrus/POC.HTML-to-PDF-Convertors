@@ -30,4 +30,12 @@ public class HTMLtoPDFController : ControllerBase
 		var pdfBytes = await converter.ConvertFromHTMLFile(_testReportPath);
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
 	}
+
+	[HttpGet("PDForgePlaywrightSDK/{outputFileName}")]
+	public async Task<IActionResult> GetMicrosoftPlaywrightGeneratedPDF([FromRoute] string outputFileName)
+	{
+		var converter = _factory.Get("microsoftplaywright");
+		var pdfBytes = await converter.ConvertFromHTMLFile(_testReportPath);
+		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
+	}
 }
