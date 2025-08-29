@@ -8,10 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="MockData\finops-report-apex-charts %28disabled animations%29.html" />
+    <None Remove="MockData\finops-report-apex-charts.html" />
     <None Remove="MockData\finops-report.html" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="MockData\finops-report-apex-charts (disabled animations).html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="MockData\finops-report-apex-charts.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="MockData\finops-report.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

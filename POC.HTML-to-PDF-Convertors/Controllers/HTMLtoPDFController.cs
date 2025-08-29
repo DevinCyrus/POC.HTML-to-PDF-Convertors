@@ -8,7 +8,7 @@ namespace POC.HTML_to_PDF_Convertors.Controllers;
 public class HTMLtoPDFController : ControllerBase
 {
 	private readonly IHtmlToPdfConverterFactory _factory;
-	private readonly string _testReportPath = Path.Combine(AppContext.BaseDirectory, "MockData", "finops-report.html");
+	private readonly string _testReportPath = Path.Combine(AppContext.BaseDirectory, "MockData", "finops-report-apex-charts (disabled animations).html");
 
 	public HTMLtoPDFController(IHtmlToPdfConverterFactory factory)
 	{
