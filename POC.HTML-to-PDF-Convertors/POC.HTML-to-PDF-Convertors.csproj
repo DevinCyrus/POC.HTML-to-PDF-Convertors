@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\PDForgePlayWrite.Service\IronPDF.Service.csproj" />
+    <ProjectReference Include="..\Puppeteer.Service\Puppeteer.Service.csproj" />
   </ItemGroup>
 
 </Project>

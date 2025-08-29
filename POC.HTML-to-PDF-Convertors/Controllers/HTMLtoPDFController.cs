@@ -15,11 +15,19 @@ public class HTMLtoPDFController : ControllerBase
 		_factory = factory;
 	}
 
-	[HttpGet("PDForgePlayWriteSDK/{outputFileName}")]
-	public IActionResult GetIronPDFGeneratedPDF([FromRoute] string outputFileName)
+	[HttpGet("IronPDFSDK/{outputFileName}")]
+	public async Task<IActionResult> GetIronPDFGeneratedPDF([FromRoute] string outputFileName)
 	{
 		var converter = _factory.Get("ironpdf");
-		var pdfBytes = converter.ConvertFromHTMLFile(_testReportPath);
+		var pdfBytes = await converter.ConvertFromHTMLFile(_testReportPath);
+		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
+	}
+
+	[HttpGet("PuppeteerSDK/{outputFileName}")]
+	public async Task<IActionResult> GetPuppeteerGeneratedPDF([FromRoute] string outputFileName)
+	{
+		var converter = _factory.Get("puppeteer");
+		var pdfBytes = await converter.ConvertFromHTMLFile(_testReportPath);
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
 	}
 }
