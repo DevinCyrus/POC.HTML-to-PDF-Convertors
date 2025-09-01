@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Artifacts", "Artifacts", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{D18DDB8D-BAEF-4439-B7A6-348F385830AE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronPDF.Service", "PDForgePlayWrite.Service\IronPDF.Service.csproj", "{EB96F923-49B1-455F-80FF-4E3100326749}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronPDF.Service", "IronPDF.Service\IronPDF.Service.csproj", "{EB96F923-49B1-455F-80FF-4E3100326749}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{D8381575-A07D-41B7-8C34-F7DC996E634F}"
 EndProject
@@ -20,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{55
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Puppeteer.Service", "Puppeteer.Service\Puppeteer.Service.csproj", "{68655960-870E-4829-9B62-589B8B5ED9A9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicrosoftPlaywright.Service", "PDForgePlaywright.Service\MicrosoftPlaywright.Service.csproj", "{00E22868-1F6A-4D45-B191-77998D5DDF3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicrosoftPlaywright.Service", "MicrosoftPlaywright.Service\MicrosoftPlaywright.Service.csproj", "{00E22868-1F6A-4D45-B191-77998D5DDF3E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SelectPDF.Service", "SelectPDF.Service\SelectPDF.Service.csproj", "{302F6F00-5383-431C-B6EB-23153E1F44F2}"
 EndProject

@@ -33,6 +33,9 @@ public class MicrosoftPlaywrightConverterService : IHtmlToPdfConverter
 			WaitUntil = WaitUntilState.NetworkIdle
 		});
 
+		// Use screen media to preserve browser layout
+		await page.EmulateMediaAsync(new() { Media = Media.Screen });
+
 		var pdfBytes = await page.PdfAsync(new PagePdfOptions
 		{
 			Format = "A4"
