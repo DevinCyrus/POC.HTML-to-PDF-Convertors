@@ -27,4 +27,9 @@ public class SelectPDFConverterService : IHtmlToPdfConverter
 			}
 		});
 	}
+
+	public Task<(byte[] PdfBytes, TimeSpan Duration, long MemoryUsed)> ConvertWithPerfTracking(string filePath)
+	{
+		throw new NotImplementedException();
+	}
 }
