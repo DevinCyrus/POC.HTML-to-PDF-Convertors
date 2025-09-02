@@ -3,6 +3,7 @@ using Microsoft.Playwright;
 using MicrosoftPlaywright.Service;
 using PDForgePlayWrite.Service;
 using Puppeteer.Service;
+using PuppeteerSharp;
 using SelectPDF.Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +16,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IronPDFConverterService>();
-builder.Services.AddScoped<PuppeteerConverterService>();
+// Removed to implement singleton browsers for performance gains
+//builder.Services.AddScoped<PuppeteerConverterService>();
 //builder.Services.AddScoped<MicrosoftPlaywrightConverterService>();
 builder.Services.AddScoped<SelectPDFConverterService>();
 builder.Services.AddScoped<IHtmlToPdfConverterFactory, HtmlToPdfConverterFactory>();
@@ -32,14 +34,19 @@ builder.Services.AddSingleton<MicrosoftPlaywrightConverterService>(sp =>
 	return new MicrosoftPlaywrightConverterService(playwright, browser);
 });
 
+// Create Puppeteer + Browser once for the app lifetime
+builder.Services.AddSingleton<PuppeteerConverterService>(sp =>
+{
+	new BrowserFetcher().DownloadAsync().GetAwaiter().GetResult();
+	var browser = PuppeteerSharp.Puppeteer.LaunchAsync(new LaunchOptions { Headless = true })
+		.GetAwaiter().GetResult();
+
+	return new PuppeteerConverterService(browser);
+});
 
 
 var app = builder.Build();
 
-// Force creation of singleton at startup (not strictly required, but ensures the browser is launched early)
-//app.Services.GetRequiredService<IHtmlToPdfConverter>();
-
-//app.MapGet("/", () => "Playwright PDF service is running!");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
