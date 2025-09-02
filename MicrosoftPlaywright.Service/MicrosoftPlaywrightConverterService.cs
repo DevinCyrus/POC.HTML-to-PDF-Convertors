@@ -24,61 +24,26 @@ public class MicrosoftPlaywrightConverterService : IHtmlToPdfConverter
 		_browser = browser;
 	}
 
-	public async Task<byte[]> ConvertFromHTMLFile(string filePath)
-	{
-		//using var playwright = await Playwright.CreateAsync();
-		//await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-		//{
-		//	Headless = true
-		//});
-
-		// Create an isolated browser context for each request (safe for parallel use)
-		var browserContext = await _browser.NewContextAsync();
-
-		var page = await browserContext.NewPageAsync();
-
-		var fileUri = new Uri(Path.GetFullPath(filePath)).AbsoluteUri;
-		await page.GotoAsync(fileUri, new PageGotoOptions
-		{
-			WaitUntil = WaitUntilState.NetworkIdle
-		});
-
-		// Use screen media to preserve browser layout
-		await page.EmulateMediaAsync(new() { Media = Media.Screen });
-
-		var pdfBytes = await page.PdfAsync(new PagePdfOptions
-		{
-			Format = "A4"
-		});
-
-		await browserContext.CloseAsync();
-		return pdfBytes;
-	}
-
 	public async ValueTask DisposeAsync()
 	{
 		await _browser.CloseAsync();
 		_playwright.Dispose();
 	}
 
-	public async Task<(byte[] PdfBytes, TimeSpan Duration, long MemoryUsed)> ConvertWithPerfTracking(string filePath)
+	public async Task<byte[]> ConvertFromHTMLFile(string filePath)
 	{
-		// Warm up garbage collector so memory baseline is clean
-		GC.Collect();
-		GC.WaitForPendingFinalizers();
-		GC.Collect();
+		#region Transient headless browser implementation
+		//using var playwright = await Playwright.CreateAsync();
+		//await using var browserContext = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+		//{
+		//	Headless = true
+		//});
+		#endregion
 
-		long beforeMemory = GC.GetTotalMemory(true);
+		// Create an isolated browser context for each request
+		var browserContext = await _browser.NewContextAsync();
 
-		var stopwatch = Stopwatch.StartNew();
-
-		using var playwright = await Playwright.CreateAsync();
-		await using var browser = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
-		{
-			Headless = true
-		});
-
-		var page = await browser.NewPageAsync();
+		var page = await browserContext.NewPageAsync();
 
 		var fileUri = new Uri(Path.GetFullPath(filePath)).AbsoluteUri;
 		await page.GotoAsync(fileUri, new PageGotoOptions
@@ -94,7 +59,51 @@ public class MicrosoftPlaywrightConverterService : IHtmlToPdfConverter
 			Format = "A4"
 		});
 
-		await browser.CloseAsync();
+		await browserContext.CloseAsync();
+		return pdfBytes;
+	}
+
+	public async Task<(byte[] PdfBytes, TimeSpan Duration, long MemoryUsed)> ConvertWithPerfTracking(string filePath)
+	{
+		// Warm up garbage collector so memory baseline is clean
+		GC.Collect();
+		GC.WaitForPendingFinalizers();
+		GC.Collect();
+
+		long beforeMemory = GC.GetTotalMemory(true);
+
+		var stopwatch = Stopwatch.StartNew();
+
+		#region Transient headless browser implementation
+		//using var playwright = await Playwright.CreateAsync();
+		//await using var browserContext = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+		//{
+		//	Headless = true
+		//});
+
+		//var page = await browser.NewPageAsync();
+		#endregion
+
+		// Create an isolated browser context for each request
+		var browserContext = await _browser.NewContextAsync();
+
+		var page = await browserContext.NewPageAsync();
+
+		var fileUri = new Uri(Path.GetFullPath(filePath)).AbsoluteUri;
+		await page.GotoAsync(fileUri, new PageGotoOptions
+		{
+			WaitUntil = WaitUntilState.NetworkIdle
+		});
+
+		// Use screen media to preserve browser layout - can have varied results
+		//await page.EmulateMediaAsync(new() { Media = Media.Screen });
+
+		var pdfBytes = await page.PdfAsync(new PagePdfOptions
+		{
+			Format = "A4"
+		});
+
+		await browserContext.CloseAsync();
 
 		stopwatch.Stop();
 
