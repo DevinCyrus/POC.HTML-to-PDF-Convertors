@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Unit Cloud Spend</title>
+    <!-- Load Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Chart.js for data visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Load Inter font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F4F8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <!-- Header Section -->
+        <header class="text-center my-8 md:my-12">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-[#0A2342]">Business Unit Cloud Spend Report</h1>
+            <p class="text-lg md:text-xl text-[#2CA58D] mt-2">An Overview of AWS & Azure Monthly Spend</p>
+            <p class="text-lg md:text-xl text-[#2CA58D] mt-2">August 2025</p>
+        </header>
+
+        <!-- Overview Section with dynamically updated stats -->
+        <section class="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-10">
+            <div class="flex justify-center mb-6">
+                <div class="inline-flex rounded-lg shadow-sm">
+                    <button id="aws-btn" class="px-6 py-3 text-lg font-semibold text-white bg-[#0A2342] rounded-l-lg focus:outline-none">AWS</button>
+                    <button id="azure-btn" class="px-6 py-3 text-lg font-semibold text-gray-700 bg-gray-200 rounded-r-lg focus:outline-none">Azure</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+                <div class="bg-gray-50 p-5 rounded-xl">
+                    <h3 class="text-md font-semibold text-gray-500">Total Monthly Spend</h3>
+                    <p id="total-spend" class="text-4xl font-bold text-[#0A2342] mt-2"></p>
+                </div>
+                <div class="bg-gray-50 p-5 rounded-xl">
+                    <h3 class="text-md font-semibold text-gray-500">vs. Last Month</h3>
+                    <p id="month-over-month" class="text-4xl font-bold text-[#2CA58D] mt-2"></p>
+                </div>
+                <div class="bg-gray-50 p-5 rounded-xl">
+                    <h3 class="text-md font-semibold text-gray-500">Budget Variance</h3>
+                    <p id="budget-variance" class="text-4xl font-bold text-[#87255B] mt-2"></p>
+                </div>
+                <div class="bg-gray-50 p-5 rounded-xl">
+                    <h3 class="text-md font-semibold text-gray-500">Year-to-Date Spend</h3>
+                    <p id="ytd-spend" class="text-4xl font-bold text-[#0A2342] mt-2"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="grid grid-cols-1 lg:grid-cols-2 gap-10 mb-10">
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                <h2 class="text-2xl font-bold text-[#0A2342] mb-1">Business Unit Spend Breakdown</h2>
+                <p class="text-gray-600 mb-4">This chart compares the total cloud spend across your Top 5 business units, highlighting which departments are the primary drivers of cost for the selected provider.</p>
+                <div class="chart-container h-80 md:h-96">
+                    <canvas id="buSpendChart"></canvas>
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+                <h2 class="text-2xl font-bold text-[#0A2342] mb-1">Spend vs. Budget Analysis</h2>
+                <p class="text-gray-600 mb-4">This visualization tracks your Top 5 business unit's actual spending against their allocated budget, quickly identifying areas of overspending or savings.</p>
+                <div class="chart-container h-80 md:h-96">
+                    <canvas id="budgetChart"></canvas>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Service Category Table Section -->
+        <section class="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-10">
+            <h2 class="text-2xl font-bold text-[#0A2342] mb-1 text-center">Service Category Deep Dive</h2>
+            <p class="text-gray-600 mb-6 text-center max-w-3xl mx-auto">This table provides a detailed, business-unit-by-business-unit breakdown of spending for each service category, offering a precise look at where costs originate.</p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">Service Category</th>
+                            <th scope="col" class="px-6 py-3">Marketing</th>
+                            <th scope="col" class="px-6 py-3">Prod. Development</th>
+                            <th scope="col" class="px-6 py-3">Operations</th>
+                            <th scope="col" class="px-6 py-3">Data Analytics</th>
+                        </tr>
+                    </thead>
+                    <tbody id="service-spend-table">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Raw Cost Breakdown Table Section -->
+        <section class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-[#0A2342] mb-1 text-center">Cost Breakdown</h2>
+            <p class="text-gray-600 mb-6 text-center max-w-3xl mx-auto">A hierarchical breakdown of cloud costs by business unit, subscription, and resource group.</p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3">BUSINESS UNIT & Entities</th>
+                            <th scope="col" class="px-6 py-3">COST</th>
+                        </tr>
+                    </thead>
+                    <tbody id="raw-cost-table">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // Data for the AWS dashboard view
+        const awsData = {
+            totalSpend: 65670,
+            lastMonthSpend: 64400,
+            ytdSpend: 759900,
+            budget: 66500,
+            businessUnits: {
+                labels: ['Marketing', ['Product', 'Development'], 'Operations', ['Data', 'Analytics']],
+                spend: [15350, 28700, 12500, 9120],
+                budget: [15000, 30000, 12000, 9500]
+            },
+            services: {
+                labels: ['Compute', 'Storage', 'Database', 'Networking'],
+                marketing: [8000, 2500, 3000, 1850],
+                prodDev: [15000, 5500, 6000, 2200],
+                operations: [6000, 2000, 3000, 1500],
+                dataAnalytics: [4500, 1800, 1500, 1320]
+            },
+            rawCostBreakdown: [
+                { businessUnit: 'Marketing', subscription: 'Nebula Analytics', resourceGroup: 'arn:aws:kms:eu-west-1:336916495765:key', cost: 1200.50, vendor: 'AWS' },
+                { businessUnit: 'Marketing', subscription: 'Marketing-Cloud', resourceGroup: 'StoreSimple8600-resourcegroup', cost: 0.02, vendor: 'AWS' },
+                { businessUnit: 'Product Development', subscription: 'Core Compute', resourceGroup: 'elasticbeanstalk-eu-central-1-336916495765', cost: 3500.00, vendor: 'AWS' },
+                { businessUnit: 'Product Development', subscription: 'Global Storage', resourceGroup: 'arn:aws:route53:::hostedzone', cost: 250.75, vendor: 'AWS' },
+                { businessUnit: 'Operations', subscription: 'Client Database', resourceGroup: 'destination-aws-clientdata-replication', cost: 890.25, vendor: 'AWS' },
+                { businessUnit: 'Data Analytics', subscription: 'FinOps Reporting', resourceGroup: 'capitec-bank-b4-connect-billing-prod-ctr-data-eu-west', cost: 150.40, vendor: 'AWS' }
+            ]
+        };
+
+        // Data for the Azure dashboard view
+        const azureData = {
+            totalSpend: 68600,
+            lastMonthSpend: 67850,
+            ytdSpend: 816000,
+            budget: 69000,
+            businessUnits: {
+                labels: ['Marketing', ['Product', 'Development'], 'Operations', ['Data', 'Analytics']],
+                spend: [12800, 31200, 15650, 8950],
+                budget: [13000, 32000, 15000, 9000]
+            },
+            services: {
+                labels: ['Compute', 'Storage', 'Database', 'Networking'],
+                marketing: [6000, 2000, 3000, 1800],
+                prodDev: [18000, 6000, 5000, 2200],
+                operations: [8000, 3000, 3500, 1150],
+                dataAnalytics: [4000, 2500, 1500, 950]
+            },
+            rawCostBreakdown: [
+                { businessUnit: 'Marketing', subscription: 'DevOps-NorthEurope', resourceGroup: 'Default-Storage-NorthEurope', cost: 1568.60, vendor: 'Azure' },
+                { businessUnit: 'Product Development', subscription: 'Marketing-Cloud', resourceGroup: 'StoreSimple8600-resourcegroup', cost: 0.02, vendor: 'Azure' },
+                { businessUnit: 'Operations', subscription: 'Analysis-Prod', resourceGroup: '48-bus-rg-marketplace-prod', cost: 1443.92, vendor: 'Azure' },
+                { businessUnit: 'Data Analytics', subscription: 'Finance-Web', resourceGroup: 'Default-Web-NorthEurope', cost: 54.90, vendor: 'Azure' },
+                { businessUnit: 'Operations', subscription: 'Stactize-Services', resourceGroup: 'cloud-shell-storage-northeurope', cost: 0.00, vendor: 'Azure' }
+            ]
+        };
+
+        // Color palette for consistent styling
+        const palette = {
+            primary: '#0A2342',
+            secondary: '#2CA58D',
+            accent: '#87255B',
+            neutral: '#D5573B',
+            light: '#F0F4F8'
+        };
+
+        let buSpendChart, budgetChart;
+
+        // Custom tooltip options for charts to handle multi-line labels
+        const chartTooltipOptions = {
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                                return label.join(' ');
+                            } else {
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        
+        // Helper function to format currency as whole numbers
+        const formatCurrency = (value) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+
+        // Main function to update the dashboard based on the selected data provider
+        function updateDashboard(data) {
+            document.getElementById('total-spend').textContent = formatCurrency(data.totalSpend);
+            
+            // Calculate and display month-over-month change
+            const momChange = ((data.totalSpend - data.lastMonthSpend) / data.lastMonthSpend) * 100;
+            const momElement = document.getElementById('month-over-month');
+            momElement.textContent = `${momChange.toFixed(1)}%`;
+            momElement.style.color = momChange >= 0 ? palette.accent : palette.secondary;
+            
+            // Calculate and display budget variance
+            const budgetVar = data.totalSpend - data.budget;
+            const budgetVarElement = document.getElementById('budget-variance');
+            budgetVarElement.textContent = formatCurrency(budgetVar);
+            budgetVarElement.style.color = budgetVar > 0 ? palette.accent : palette.secondary;
+
+            document.getElementById('ytd-spend').textContent = formatCurrency(data.ytdSpend);
+
+            // Call functions to update charts and tables
+            updateBuSpendChart(data);
+            updateBudgetChart(data);
+            updateServiceSpendTable(data);
+            updateRawCostTable(data);
+        }
+
+        // Updates the Business Unit Spend chart
+        function updateBuSpendChart(data) {
+            const ctx = document.getElementById('buSpendChart').getContext('2d');
+            if (buSpendChart) buSpendChart.destroy();
+            buSpendChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.businessUnits.labels,
+                    datasets: [{
+                        data: data.businessUnits.spend,
+                        backgroundColor: [palette.primary, palette.secondary, palette.accent, palette.neutral],
+                        borderColor: palette.light,
+                        borderWidth: 4
+                    }]
+                },
+                options: { ...chartTooltipOptions, responsive: true, maintainAspectRatio: false }
+            });
+        }
+        
+        // Updates the Spend vs. Budget chart
+        function updateBudgetChart(data) {
+            const ctx = document.getElementById('budgetChart').getContext('2d');
+            if (budgetChart) budgetChart.destroy();
+            budgetChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.businessUnits.labels,
+                    datasets: [
+                        {
+                            label: 'Actual Spend',
+                            data: data.businessUnits.spend,
+                            backgroundColor: palette.primary,
+                            borderColor: palette.primary,
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Budget',
+                            data: data.businessUnits.budget,
+                            backgroundColor: palette.secondary,
+                            borderColor: palette.secondary,
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: { ...chartTooltipOptions, responsive: true, maintainAspectRatio: false, indexAxis: 'y' }
+            });
+        }
+        
+        // Populates the Service Category Deep Dive table
+        function updateServiceSpendTable(data) {
+            const tableBody = document.getElementById('service-spend-table');
+            tableBody.innerHTML = '';
+            
+            const serviceNames = data.services.labels;
+            const buSpends = [
+                data.services.marketing,
+                data.services.prodDev,
+                data.services.operations,
+                data.services.dataAnalytics
+            ];
+
+            for (let i = 0; i < serviceNames.length; i++) {
+                const row = document.createElement('tr');
+                row.classList.add('bg-white', 'border-b', 'hover:bg-gray-50');
+
+                let serviceCell = document.createElement('th');
+                serviceCell.scope = 'row';
+                serviceCell.classList.add('px-6', 'py-4', 'font-medium', 'text-gray-900', 'whitespace-nowrap');
+                serviceCell.textContent = serviceNames[i];
+                row.appendChild(serviceCell);
+
+                for (let j = 0; j < buSpends.length; j++) {
+                    let spendCell = document.createElement('td');
+                    spendCell.classList.add('px-6', 'py-4');
+                    spendCell.textContent = formatCurrency(buSpends[j][i]);
+                    row.appendChild(spendCell);
+                }
+                tableBody.appendChild(row);
+            }
+        }
+
+        // Populates the Raw Cost Breakdown table with the new design
+        function updateRawCostTable(data) {
+            const tableBody = document.getElementById('raw-cost-table');
+            tableBody.innerHTML = '';
+            
+            // Group data by Business Unit and Subscription
+            const groupedByBU = data.rawCostBreakdown.reduce((acc, item) => {
+                if (!acc[item.businessUnit]) {
+                    acc[item.businessUnit] = {
+                        subscriptions: {},
+                        total: 0
+                    };
+                }
+                if (!acc[item.businessUnit].subscriptions[item.subscription]) {
+                    acc[item.businessUnit].subscriptions[item.subscription] = {
+                        items: [],
+                        total: 0
+                    };
+                }
+                acc[item.businessUnit].subscriptions[item.subscription].items.push(item);
+                acc[item.businessUnit].subscriptions[item.subscription].total += item.cost;
+                acc[item.businessUnit].total += item.cost;
+                return acc;
+            }, {});
+
+            // Build the table based on the new grouped structure
+            for (const buName in groupedByBU) {
+                const buData = groupedByBU[buName];
+                
+                // Create a row for the Business Unit (top-level)
+                const buRow = document.createElement('tr');
+                buRow.classList.add('bg-gray-100', 'text-gray-900', 'font-semibold', 'border-b');
+                buRow.innerHTML = `
+                    <td class="px-6 py-3 whitespace-nowrap text-[#0A2342] font-bold">${buName}</td>
+                    <td class="px-6 py-3 whitespace-nowrap text-[#0A2342] font-bold">${formatCurrency(buData.total)}</td>
+                `;
+                tableBody.appendChild(buRow);
+
+                // Iterate through Subscriptions for the current Business Unit
+                for (const subName in buData.subscriptions) {
+                    const subData = buData.subscriptions[subName];
+                    
+                    // Create a row for the Subscription (second-level)
+                    const subRow = document.createElement('tr');
+                    subRow.classList.add('bg-white', 'border-b', 'hover:bg-gray-50');
+                    subRow.innerHTML = `
+                        <td class="px-6 py-3 whitespace-nowrap pl-8">${subName}</td>
+                        <td class="px-6 py-3 whitespace-nowrap">${formatCurrency(subData.total)}</td>
+                    `;
+                    tableBody.appendChild(subRow);
+                    
+                    // Iterate through Resource Groups for the current Subscription
+                    subData.items.forEach(item => {
+                        const resRow = document.createElement('tr');
+                        resRow.classList.add('bg-white', 'border-b', 'hover:bg-gray-50');
+                        resRow.innerHTML = `
+                            <td class="px-6 py-3 whitespace-nowrap pl-16 text-xs text-gray-500">${item.resourceGroup}</td>
+                            <td class="px-6 py-3 whitespace-nowrap text-xs text-gray-500">${formatCurrency(item.cost)}</td>
+                        `;
+                        tableBody.appendChild(resRow);
+                    });
+                }
+            }
+            
+            // Add the final grand total row
+            const grandTotal = Object.values(groupedByBU).reduce((sum, bu) => sum + bu.total, 0);
+            const grandTotalRow = document.createElement('tr');
+            grandTotalRow.classList.add('bg-gray-200', 'text-gray-900', 'font-extrabold', 'text-lg');
+            
+            const totalLabelCell = document.createElement('td');
+            totalLabelCell.classList.add('px-6', 'py-4', 'text-right');
+            totalLabelCell.textContent = 'Grand Total';
+            grandTotalRow.appendChild(totalLabelCell);
+            
+            const totalValueCell = document.createElement('td');
+            totalValueCell.classList.add('px-6', 'py-4');
+            totalValueCell.textContent = formatCurrency(grandTotal);
+            grandTotalRow.appendChild(totalValueCell);
+
+            tableBody.appendChild(grandTotalRow);
+        }
+
+        // Get the AWS and Azure buttons
+        const awsBtn = document.getElementById('aws-btn');
+        const azureBtn = document.getElementById('azure-btn');
+
+        // Add event listeners for button clicks to switch between providers
+        awsBtn.addEventListener('click', () => {
+            updateDashboard(awsData);
+            awsBtn.classList.replace('bg-gray-200', 'bg-[#0A2342]');
+            awsBtn.classList.add('text-white');
+            azureBtn.classList.replace('bg-[#0A2342]', 'bg-gray-200');
+            azureBtn.classList.remove('text-white');
+        });
+
+        azureBtn.addEventListener('click', () => {
+            updateDashboard(azureData);
+            azureBtn.classList.replace('bg-gray-200', 'bg-[#0A2342]');
+            azureBtn.classList.add('text-white');
+            awsBtn.classList.replace('bg-[#0A2342]', 'bg-gray-200');
+            awsBtn.classList.remove('text-white');
+        });
+
+        // Initialize the dashboard on page load with AWS data
+        window.onload = () => {
+            updateDashboard(awsData);
+        };
+    </script>
+</body>
+</html>
+
