@@ -1,6 +1,5 @@
 ﻿using Core.Services.Contracts;
 using Microsoft.Playwright;
-using System.Diagnostics;
 
 namespace MicrosoftPlaywright.Service;
 
@@ -43,73 +42,32 @@ public class MicrosoftPlaywrightConverterService : IHtmlToPdfConverter
 		// Create an isolated browser context for each request
 		var browserContext = await _browser.NewContextAsync();
 
+		// Open new page on the new browser context
 		var page = await browserContext.NewPageAsync();
 
-		var fileUri = new Uri(Path.GetFullPath(filePath)).AbsoluteUri;
-		await page.GotoAsync(fileUri, new PageGotoOptions
-		{
-			WaitUntil = WaitUntilState.NetworkIdle
-		});
+		// Load HTML on the new page
+		await page.GotoAsync(filePath);
 
-		// Use screen media to preserve browser layout - can have varied results
-		//await page.EmulateMediaAsync(new() { Media = Media.Screen });
-
-		var pdfBytes = await page.PdfAsync(new PagePdfOptions
-		{
-			Format = "A4"
-		});
-
-		await browserContext.CloseAsync();
-		return pdfBytes;
-	}
-
-	public async Task<(byte[] PdfBytes, TimeSpan Duration, long MemoryUsed)> ConvertWithPerfTracking(string filePath)
-	{
-		// Warm up garbage collector so memory baseline is clean
-		GC.Collect();
-		GC.WaitForPendingFinalizers();
-		GC.Collect();
-
-		long beforeMemory = GC.GetTotalMemory(true);
-
-		var stopwatch = Stopwatch.StartNew();
-
-		#region Transient headless browser implementation
-		//using var playwright = await Playwright.CreateAsync();
-		//await using var browserContext = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+		// Alternatively, load the page with specific GoToOptions if necessary
+		// https://playwright.dev/dotnet/docs/api/class-page#page-goto
+		//await page.GotoAsync(fileUri, new PageGotoOptions
 		//{
-		//	Headless = true
+		//	WaitUntil = WaitUntilState.NetworkIdle
 		//});
 
-		//var page = await browser.NewPageAsync();
-		#endregion
+		// Use screen media to preserve browser layout - Have varied results during testing
+		// https://playwright.dev/dotnet/docs/api/class-page#page-emulate-media
+		// await page.EmulateMediaAsync(new() { Media = Media.Screen });
 
-		// Create an isolated browser context for each request
-		var browserContext = await _browser.NewContextAsync();
-
-		var page = await browserContext.NewPageAsync();
-
-		var fileUri = new Uri(Path.GetFullPath(filePath)).AbsoluteUri;
-		await page.GotoAsync(fileUri, new PageGotoOptions
-		{
-			WaitUntil = WaitUntilState.NetworkIdle
-		});
-
-		// Use screen media to preserve browser layout - can have varied results
-		//await page.EmulateMediaAsync(new() { Media = Media.Screen });
-
+		// Generate PDF from loaded HTML
 		var pdfBytes = await page.PdfAsync(new PagePdfOptions
 		{
 			Format = "A4"
 		});
 
+		// Close the browser context and any pages for this session
 		await browserContext.CloseAsync();
 
-		stopwatch.Stop();
-
-		long afterMemory = GC.GetTotalMemory(false);
-		long memoryUsed = afterMemory - beforeMemory;
-
-		return (pdfBytes, stopwatch.Elapsed, memoryUsed);
+		return pdfBytes;
 	}
 }

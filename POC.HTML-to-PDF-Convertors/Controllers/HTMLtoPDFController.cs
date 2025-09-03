@@ -1,5 +1,6 @@
 ﻿using Core.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace POC.HTML_to_PDF_Convertors.Controllers;
 
@@ -10,9 +11,18 @@ public class HTMLtoPDFController : ControllerBase
 	private readonly IHtmlToPdfConverterFactory _factory;
 	private readonly string _genericReportPath = Path.Combine(AppContext.BaseDirectory, "MockData", "finops-report-apex-charts (disabled animations).html");
 	private readonly string _cloudOverviewReportPath = Path.Combine(AppContext.BaseDirectory, "MockData", "Cloud Overview.html");
-	private readonly string _cleanedCloudOverviewReportPath = Path.Combine(AppContext.BaseDirectory, "MockData", "Cloud Overview - Cleaned.html");
 	private readonly string _serviceReportPath = Path.Combine(AppContext.BaseDirectory, "MockData", "Report Service.html");
 	private readonly string _vendorReportPath = Path.Combine(AppContext.BaseDirectory, "MockData", "Updated Report Vendor.html");
+
+	// Report that have been somewhat cleaned up and styled for PDF generation
+	private readonly string _cleanedCloudOverviewReportPath = Path.Combine(AppContext.BaseDirectory, "MockData", "Cloud Overview - Cleaned.html");
+
+	// Duplicates of the above report but with sections moved around
+	// These will be used in performance testing so that back to back calls to API are not for the exact same report to avoid potential caching skewing results
+	private readonly string _cleanedCloudOverviewReportPathV1 = Path.Combine(AppContext.BaseDirectory, "MockData", "Cloud Overview - Cleaned - v1.html");
+	private readonly string _cleanedCloudOverviewReportPathV2 = Path.Combine(AppContext.BaseDirectory, "MockData", "Cloud Overview - Cleaned - v2.html");
+	private readonly string _cleanedCloudOverviewReportPathV3 = Path.Combine(AppContext.BaseDirectory, "MockData", "Cloud Overview - Cleaned - v3.html");
+	private readonly string _cleanedCloudOverviewReportPathV4 = Path.Combine(AppContext.BaseDirectory, "MockData", "Cloud Overview - Cleaned - v4.html");
 
 	private string _testReportPath;
 
@@ -23,67 +33,93 @@ public class HTMLtoPDFController : ControllerBase
 		_testReportPath = _cleanedCloudOverviewReportPath;
 	}
 
+	/// <summary>
+	/// Generate report PDF using IronPDF and include duration with processing duration in header
+	/// </summary>
+	/// <param name="reportNumber">There are multiple versions of the same report (1-5) just with varied layout ordering, this is used for performance testing so that calls can be for different reports to try avoid any hidden caching that may skew results.</param>
+	/// <param name="outputFileName">The name that the generated report file will have.</param>
 	[HttpGet("IronPDFSDK/{outputFileName}")]
-	public async Task<IActionResult> GetIronPDFGeneratedPDF([FromRoute] string outputFileName)
+	public async Task<IActionResult> GetIronPDFGeneratedPDF([FromRoute] string outputFileName, [FromRoute] int reportNumber = 5)
 	{
+		setReportPath(reportNumber);
+
+		var stopwatch = Stopwatch.StartNew();
+
 		var converter = _factory.Get("ironpdf");
 		var pdfBytes = await converter.ConvertFromHTMLFile(_testReportPath);
-		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
-	}
 
-	[HttpGet("IronPDFSDK/{outputFileName}/TrackPerformance")]
-	public async Task<IActionResult> GetIronPDFGeneratedPDFWithPerformance([FromRoute] string outputFileName)
-	{
-		var converter = _factory.Get("ironpdf");
-		var (pdfBytes, duration, memoryUsed) = await converter.ConvertWithPerfTracking(_testReportPath);
-
-		// Add perf info to headers so you can track in Postman / browser
-		Response.Headers["X-PDF-Generation-Time-ms"] = duration.TotalMilliseconds.ToString("F0");
-		Response.Headers["X-PDF-Memory-Used-bytes"] = memoryUsed.ToString();
+		stopwatch.Stop();
+		Response.Headers["X-IronPDF-PDF-Generation-Time-ms"] = stopwatch.Elapsed.TotalMilliseconds.ToString("F0");
 
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
 	}
 
+	/// <summary>
+	/// Generate report PDF using Puppeteer and include duration with processing duration in header
+	/// </summary>
+	/// <param name="reportNumber">There are multiple versions of the same report (1-5) just with varied layout ordering, this is used for performance testing so that calls can be for different reports to try avoid any hidden caching that may skew results.</param>
+	/// <param name="outputFileName">The name that the generated report file will have.</param>
 	[HttpGet("PuppeteerSDK/{outputFileName}")]
-	public async Task<IActionResult> GetPuppeteerGeneratedPDF([FromRoute] string outputFileName)
+	public async Task<IActionResult> GetPuppeteerGeneratedPDF([FromRoute] string outputFileName, [FromRoute] int reportNumber = 5)
 	{
+		setReportPath(reportNumber);
+
+		var stopwatch = Stopwatch.StartNew();
+
 		var converter = _factory.Get("puppeteer");
 		var pdfBytes = await converter.ConvertFromHTMLFile(_testReportPath);
-		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
-	}
 
-	[HttpGet("PuppeteerSDK/{outputFileName}/TrackPerformance")]
-	public async Task<IActionResult> GetPuppeteerGeneratedPDFWithPerformance([FromRoute] string outputFileName)
-	{
-		var converter = _factory.Get("puppeteer");
-		var (pdfBytes, duration, memoryUsed) = await converter.ConvertWithPerfTracking(_testReportPath);
-
-		// Add perf info to headers so you can track in Postman / browser
-		Response.Headers["X-PDF-Generation-Time-ms"] = duration.TotalMilliseconds.ToString("F0");
-		Response.Headers["X-PDF-Memory-Used-bytes"] = memoryUsed.ToString();
+		stopwatch.Stop();
+		Response.Headers["X-Puppeteer-PDF-Generation-Time-ms"] = stopwatch.Elapsed.TotalMilliseconds.ToString("F0");
 
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
 	}
 
+	/// <summary>
+	/// Generate report PDF using Playwright and include duration with processing duration in header
+	/// </summary>
+	/// <param name="reportNumber">There are multiple versions of the same report (1-5) just with varied layout ordering, this is used for performance testing so that calls can be for different reports to try avoid any hidden caching that may skew results.</param>
+	/// <param name="outputFileName">The name that the generated report file will have.</param>
 	[HttpGet("PlaywrightSDK/{outputFileName}")]
-	public async Task<IActionResult> GetMicrosoftPlaywrightGeneratedPDF([FromRoute] string outputFileName)
+	public async Task<IActionResult> GetMicrosoftPlaywrightGeneratedPDF([FromRoute] string outputFileName, [FromRoute] int reportNumber = 5)
 	{
+		setReportPath(reportNumber);
+
+		var stopwatch = Stopwatch.StartNew();
+
 		var converter = _factory.Get("microsoftplaywright");
 		var pdfBytes = await converter.ConvertFromHTMLFile(_testReportPath);
+
+		stopwatch.Stop();
+		Response.Headers["X-Playwright-PDF-Generation-Time-ms"] = stopwatch.Elapsed.TotalMilliseconds.ToString("F0");
+
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
 	}
 
-	[HttpGet("PlaywrightSDK/{outputFileName}/TrackPerformance")]
-	public async Task<IActionResult> GetMicrosoftPlaywrightGeneratedPDFWithPerformance([FromRoute] string outputFileName)
+	// Helper class used to switch reports for performance testing
+	private void setReportPath(int reportNumber)
 	{
-		var converter = _factory.Get("microsoftplaywright");
-		var (pdfBytes, duration, memoryUsed) = await converter.ConvertWithPerfTracking(_testReportPath);
-
-		// Add perf info to headers so you can track in Postman / browser
-		Response.Headers["X-PDF-Generation-Time-ms"] = duration.TotalMilliseconds.ToString("F0");
-		Response.Headers["X-PDF-Memory-Used-bytes"] = memoryUsed.ToString();
-
-		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
+		switch (reportNumber)
+		{
+			case 1:
+				_testReportPath = _cleanedCloudOverviewReportPathV1;
+				break;
+			case 2:
+				_testReportPath = _cleanedCloudOverviewReportPathV2;
+				break;
+			case 3:
+				_testReportPath = _cleanedCloudOverviewReportPathV3;
+				break;
+			case 4:
+				_testReportPath = _cleanedCloudOverviewReportPathV4;
+				break;
+			case 5:
+				_testReportPath = _cleanedCloudOverviewReportPath;
+				break;
+			default:
+				_testReportPath = _genericReportPath;
+				break;
+		}
 	}
 
 	// Hiding endpoint SelectPDF cannot handle dynamic javascript

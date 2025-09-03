@@ -34,7 +34,7 @@ builder.Services.AddSingleton<MicrosoftPlaywrightConverterService>(sp =>
 	return new MicrosoftPlaywrightConverterService(playwright, browser);
 });
 
-// Create Puppeteer + Browser once for the app lifetime
+// Create Puppeteer Browser once for the app lifetime
 builder.Services.AddSingleton<PuppeteerConverterService>(sp =>
 {
 	new BrowserFetcher().DownloadAsync().GetAwaiter().GetResult();
@@ -44,9 +44,7 @@ builder.Services.AddSingleton<PuppeteerConverterService>(sp =>
 	return new PuppeteerConverterService(browser);
 });
 
-
 var app = builder.Build();
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

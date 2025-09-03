@@ -1,6 +1,5 @@
 ﻿using Core.Services.Contracts;
 using PuppeteerSharp;
-using System.Diagnostics;
 
 namespace Puppeteer.Service;
 
@@ -24,46 +23,26 @@ public class PuppeteerConverterService : IHtmlToPdfConverter, IAsyncDisposable
 	public async Task<byte[]> ConvertFromHTMLFile(string filePath)
 	{
 		#region Transient headless browser implementation
+		// The below implementation has major performance drawbacks - currently implemented as singleton at startup to reduce overhead
 		// This browser download will likely need to be handled more elegantly in a production environment
 		//await new BrowserFetcher().DownloadAsync();
 		//using var browser = await PuppeteerSharp.Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
 		//using var page = await browser.NewPageAsync();
 		#endregion
 
+		// Open new page on singleton headless browser
 		using var page = await _browser.NewPageAsync();
 
-		await page.GoToAsync(filePath);
-		return await page.PdfDataAsync();
-	}
-
-	public async Task<(byte[] PdfBytes, TimeSpan Duration, long MemoryUsed)> ConvertWithPerfTracking(string filePath)
-	{
-		// Warm up garbage collector so memory baseline is clean
-		GC.Collect();
-		GC.WaitForPendingFinalizers();
-		GC.Collect();
-
-		long beforeMemory = GC.GetTotalMemory(true);
-
-		var stopwatch = Stopwatch.StartNew();
-
-		#region Transient headless browser implementation
-		// This browser download will likely need to be handled more elegantly in a production environment
-		//await new BrowserFetcher().DownloadAsync();
-		//using var browser = await PuppeteerSharp.Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
-		//using var page = await browser.NewPageAsync();
-		#endregion
-
-		using var page = await _browser.NewPageAsync();
-
+		// Load HTML on the new page
 		await page.GoToAsync(filePath);
 
+		// Generate PDF from loaded HTML
+		var pdfBytes = await page.PdfDataAsync();
 
-		stopwatch.Stop();
+		// Manually close page (due to singleton context for headless browser)
+		await page.CloseAsync();
 
-		long afterMemory = GC.GetTotalMemory(false);
-		long memoryUsed = afterMemory - beforeMemory;
-
-		return (await page.PdfDataAsync(), stopwatch.Elapsed, memoryUsed);
+		return pdfBytes;
 	}
+
 }
