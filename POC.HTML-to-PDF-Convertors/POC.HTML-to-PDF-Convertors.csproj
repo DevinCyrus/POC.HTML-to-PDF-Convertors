@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="MockData\Cloud Overview - Cleaned - v1.html" />
+    <None Remove="MockData\Cloud Overview - Cleaned - v2.html" />
+    <None Remove="MockData\Cloud Overview - Cleaned - v3.html" />
+    <None Remove="MockData\Cloud Overview - Cleaned - v4.html" />
     <None Remove="MockData\Cloud Overview - Cleaned.html" />
     <None Remove="MockData\Cloud Overview.html" />
     <None Remove="MockData\finops-report-apex-charts %28disabled animations%29.html" />
@@ -15,6 +19,21 @@
     <None Remove="MockData\finops-report.html" />
     <None Remove="MockData\Report Service.html" />
     <None Remove="MockData\Updated Report Vendor.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="MockData\Cloud Overview - Cleaned - v1.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="MockData\Cloud Overview - Cleaned - v2.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="MockData\Cloud Overview - Cleaned - v3.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="MockData\Cloud Overview - Cleaned - v4.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
