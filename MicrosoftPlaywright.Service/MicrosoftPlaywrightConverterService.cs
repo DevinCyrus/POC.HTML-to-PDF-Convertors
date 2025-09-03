@@ -55,7 +55,9 @@ public class MicrosoftPlaywrightConverterService : IHtmlToPdfConverter
 		//	WaitUntil = WaitUntilState.NetworkIdle
 		//});
 
-		// Use screen media to preserve browser layout - Have varied results during testing
+		// Had varied results during testing wit the below option
+		// I found not using this had best results, but that is most likely directly tied the the HTML of the report and its layout/styling
+		// Use screen media to preserve browser layout
 		// https://playwright.dev/dotnet/docs/api/class-page#page-emulate-media
 		// await page.EmulateMediaAsync(new() { Media = Media.Screen });
 

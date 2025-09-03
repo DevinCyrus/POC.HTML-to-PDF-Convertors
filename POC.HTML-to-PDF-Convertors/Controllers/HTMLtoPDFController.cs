@@ -36,10 +36,10 @@ public class HTMLtoPDFController : ControllerBase
 	/// <summary>
 	/// Generate report PDF using IronPDF and include duration with processing duration in header
 	/// </summary>
-	/// <param name="reportNumber">There are multiple versions of the same report (1-5) just with varied layout ordering, this is used for performance testing so that calls can be for different reports to try avoid any hidden caching that may skew results.</param>
+	/// <param name="reportNumber">There are multiple versions of the same report (1-6) just with varied layout ordering, this is used for performance testing so that calls can be for different reports to try avoid any hidden caching that may skew results.</param>
 	/// <param name="outputFileName">The name that the generated report file will have.</param>
-	[HttpGet("IronPDFSDK/{outputFileName}")]
-	public async Task<IActionResult> GetIronPDFGeneratedPDF([FromRoute] string outputFileName, [FromRoute] int reportNumber = 5)
+	[HttpGet("IronPDFSDK/{reportNumber}/{outputFileName}")]
+	public async Task<IActionResult> GetIronPDFGeneratedPDF([FromRoute] string outputFileName, [FromRoute] int reportNumber = 6)
 	{
 		setReportPath(reportNumber);
 
@@ -57,10 +57,10 @@ public class HTMLtoPDFController : ControllerBase
 	/// <summary>
 	/// Generate report PDF using Puppeteer and include duration with processing duration in header
 	/// </summary>
-	/// <param name="reportNumber">There are multiple versions of the same report (1-5) just with varied layout ordering, this is used for performance testing so that calls can be for different reports to try avoid any hidden caching that may skew results.</param>
+	/// <param name="reportNumber">There are multiple versions of the same report (1-6) just with varied layout ordering, this is used for performance testing so that calls can be for different reports to try avoid any hidden caching that may skew results.</param>
 	/// <param name="outputFileName">The name that the generated report file will have.</param>
-	[HttpGet("PuppeteerSDK/{outputFileName}")]
-	public async Task<IActionResult> GetPuppeteerGeneratedPDF([FromRoute] string outputFileName, [FromRoute] int reportNumber = 5)
+	[HttpGet("PuppeteerSDK/{reportNumber}/{outputFileName}")]
+	public async Task<IActionResult> GetPuppeteerGeneratedPDF([FromRoute] string outputFileName, [FromRoute] int reportNumber = 6)
 	{
 		setReportPath(reportNumber);
 
@@ -78,10 +78,10 @@ public class HTMLtoPDFController : ControllerBase
 	/// <summary>
 	/// Generate report PDF using Playwright and include duration with processing duration in header
 	/// </summary>
-	/// <param name="reportNumber">There are multiple versions of the same report (1-5) just with varied layout ordering, this is used for performance testing so that calls can be for different reports to try avoid any hidden caching that may skew results.</param>
+	/// <param name="reportNumber">There are multiple versions of the same report (1-6) just with varied layout ordering, this is used for performance testing so that calls can be for different reports to try avoid any hidden caching that may skew results.</param>
 	/// <param name="outputFileName">The name that the generated report file will have.</param>
-	[HttpGet("PlaywrightSDK/{outputFileName}")]
-	public async Task<IActionResult> GetMicrosoftPlaywrightGeneratedPDF([FromRoute] string outputFileName, [FromRoute] int reportNumber = 5)
+	[HttpGet("PlaywrightSDK/{reportNumber}/{outputFileName}")]
+	public async Task<IActionResult> GetMicrosoftPlaywrightGeneratedPDF([FromRoute] string outputFileName, [FromRoute] int reportNumber = 6)
 	{
 		setReportPath(reportNumber);
 
@@ -99,27 +99,15 @@ public class HTMLtoPDFController : ControllerBase
 	// Helper class used to switch reports for performance testing
 	private void setReportPath(int reportNumber)
 	{
-		switch (reportNumber)
+		_testReportPath = reportNumber switch
 		{
-			case 1:
-				_testReportPath = _cleanedCloudOverviewReportPathV1;
-				break;
-			case 2:
-				_testReportPath = _cleanedCloudOverviewReportPathV2;
-				break;
-			case 3:
-				_testReportPath = _cleanedCloudOverviewReportPathV3;
-				break;
-			case 4:
-				_testReportPath = _cleanedCloudOverviewReportPathV4;
-				break;
-			case 5:
-				_testReportPath = _cleanedCloudOverviewReportPath;
-				break;
-			default:
-				_testReportPath = _genericReportPath;
-				break;
-		}
+			1 => _cleanedCloudOverviewReportPathV1,
+			2 => _cleanedCloudOverviewReportPathV2,
+			3 => _cleanedCloudOverviewReportPathV3,
+			4 => _cleanedCloudOverviewReportPathV4,
+			5 => _cleanedCloudOverviewReportPath,
+			_ => _genericReportPath
+		};
 	}
 
 	// Hiding endpoint SelectPDF cannot handle dynamic javascript
