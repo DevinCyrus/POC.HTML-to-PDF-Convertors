@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>FinOps Test PDF Report - Apex vs Chart.js</title>
+
+        <!-- Chart Libraries -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+        <!-- Fonts & Styling -->
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+          body { font-family:'Inter', sans-serif; background:#f8fafc; color:#1f2937; margin:0; padding:0; }
+          h1,h2,h3{margin:0 0 .5rem 0;}
+          h1{font-size:28px;} h2{font-size:22px;} h3{font-size:18px;}
+          .container {max-width:900px; margin:0 auto; padding:24px;}
+          .section {margin-top:32px; page-break-inside: avoid;}
+          .page-break {page-break-before: always;}
+          .chart-card {background:#ffffff; border-radius:12px; padding:20px; margin-bottom:32px; box-shadow:0 4px 12px rgba(0,0,0,0.05);}
+          canvas, .apexchart {width:100% !important; height:300px !important;}
+          @page {size:A4; margin:16mm;}
+          /* * {-webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;} */
+          @media print {
+              .apexcharts-toolbar {
+                display: none !important;
+              }
+            }
+
+        </style>
+    </head>
+    <body>
+
+        <div class="container">
+            <header class="section">
+                <h1>FinOps Test PDF Report</h1>
+                <p>Comparison of ApexCharts vs Chart.js for multiple chart types in PDF-friendly layouts.</p>
+            </header>
+
+            <!-- Line Charts -->
+            <section class="section chart-card">
+            <h2>[ApexCharts] Monthly Cloud Spend Trend</h2>
+                <div id="lineApex"></div>
+            </section>
+
+            <section class="section chart-card">
+                <h2>[Chart.js] Monthly Cloud Spend Trend</h2>
+                <canvas id="lineChartJS"></canvas>
+            </section>
+
+            <!-- Bar Charts -->
+            <section class="section chart-card page-break">
+                <h2>[ApexCharts] Business Unit Monthly Spend</h2>
+                <div id="barApex"></div>
+            </section>
+
+            <section class="section chart-card">
+                <h2>[Chart.js] Business Unit Monthly Spend</h2>
+                <canvas id="barChartJS"></canvas>
+            </section>
+
+            <!-- Stacked Bar Charts -->
+            <section class="section chart-card page-break">
+                <h2>[ApexCharts] Business Unit vs Budget (Stacked)</h2>
+                <div id="stackedApex"></div>
+            </section>
+
+            <section class="section chart-card">
+                <h2>[Chart.js] Business Unit vs Budget (Stacked)</h2>
+                <canvas id="stackedChartJS"></canvas>
+            </section>
+
+            <!-- Mixed Line+Bar Charts -->
+            <section class="section chart-card page-break">
+                <h2>[ApexCharts] Cloud Spend vs Budget (Mixed)</h2>
+                <div id="mixedApex"></div>
+            </section>
+
+            <section class="section chart-card">
+                <h2>[Chart.js] Cloud Spend vs Budget (Mixed)</h2>
+                <canvas id="mixedChartJS"></canvas>
+            </section>
+
+            <!-- Pie Charts -->
+            <section class="section chart-card page-break">
+              <h2>[ApexCharts] Cloud Spend Distribution (Pie)</h2>
+              <div id="pieApex"></div>
+            </section>
+
+            <section class="section chart-card">
+              <h2>[Chart.js] Cloud Spend Distribution (Pie)</h2>
+              <canvas id="pieChartJS"></canvas>
+            </section>
+
+            <!-- Donut Charts -->
+            <section class="section chart-card page-break">
+              <h2>[ApexCharts] Cloud Spend Distribution (Donut)</h2>
+              <div id="donutApex"></div>
+            </section>
+
+            <section class="section chart-card">
+              <h2>[Chart.js] Cloud Spend Distribution (Donut)</h2>
+              <canvas id="donutChartJS"></canvas>
+            </section>
+
+            <!-- Radar Charts -->
+            <section class="section chart-card page-break">
+              <h2>[ApexCharts] Cost Efficiency Radar</h2>
+              <div id="radarApex"></div>
+            </section>
+
+            <section class="section chart-card">
+              <h2>[Chart.js] Cost Efficiency Radar</h2>
+              <canvas id="radarChartJS"></canvas>
+            </section>
+
+            <!-- Area Charts -->
+            <section class="section chart-card page-break">
+              <h2>[ApexCharts] Monthly Cloud Spend Area</h2>
+              <div id="areaApex"></div>
+            </section>
+
+            <section class="section chart-card">
+              <h2>[Chart.js] Monthly Cloud Spend Area</h2>
+              <canvas id="areaChartJS"></canvas>
+            </section>
+
+        </div>
+
+        <!-- Required to have labels on Chart.js items -->
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+        <script>
+            const palette = { primary:'#0A2342', secondary:'#2CA58D', accent:'#87255B' };
+
+            // -------------------- ApexCharts --------------------
+            // Line Chart
+            new ApexCharts(document.querySelector("#lineApex"), {
+              chart:{type:'line',height:280,animations:{enabled:false}},
+              series:[{name:'Spend ($)',data:[91800,94000,96500,98200,100400,102100,105300,108700,112200,116900,117100,124380]}],
+              xaxis:{categories:['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul']},
+              colors:[palette.primary]
+            }).render();
+
+            // Bar Chart
+            new ApexCharts(document.querySelector("#barApex"), {
+              chart:{type:'bar',height:280,animations:{enabled:false}},
+              series:[
+                {name:'AWS Spend',data:[15350,28700,12500,9120]},
+                {name:'Azure Spend',data:[12800,31200,15650,8950]}
+              ],
+              xaxis:{categories:['Marketing','Prod Dev','Operations','Data Analytics']},
+              colors:[palette.primary,palette.secondary]
+            }).render();
+
+            // Stacked Bar
+            new ApexCharts(document.querySelector("#stackedApex"), {
+              chart:{type:'bar',height:280,stacked:true,animations:{enabled:false}},
+              series:[
+                {name:'AWS',data:[15350,28700,12500,9120]},
+                {name:'Azure',data:[12800,31200,15650,8950]}
+              ],
+              xaxis:{categories:['Marketing','Prod Dev','Operations','Data Analytics']},
+              colors:[palette.primary,palette.secondary]
+            }).render();
+
+            // Mixed
+            new ApexCharts(document.querySelector("#mixedApex"), {
+              chart:{type:'line',height:280,animations:{enabled:false}},
+              series:[
+                {name:'Actual Spend',type:'column',data:[28150,59900,28150,18070]},
+                {name:'Budget',type:'line',data:[29000,61000,28000,19000]}
+              ],
+              xaxis:{categories:['Marketing','Prod Dev','Operations','Data Analytics']},
+              colors:[palette.primary,palette.accent]
+            }).render();
+
+            // Pie
+            new ApexCharts(document.querySelector("#pieApex"), {
+              chart:{type:'pie',height:300,animations:{enabled:false}},
+              series:[12800,15350,31200,28700],
+              labels:['AWS','Azure','GCP','Other'],
+              colors:[palette.primary,palette.secondary,'#F59E0B','#EF4444']
+            }).render();
+
+            // Donut
+            new ApexCharts(document.querySelector("#donutApex"), {
+              chart:{type:'donut',height:300,animations:{enabled:false}},
+              series:[12800,15350,31200,28700],
+              labels:['AWS','Azure','GCP','Other'],
+              colors:[palette.primary,palette.secondary,'#F59E0B','#EF4444']
+            }).render();
+
+            // Radar
+            new ApexCharts(document.querySelector("#radarApex"), {
+              chart:{type:'radar',height:300,animations:{enabled:false}},
+              series:[{name:'Efficiency',data:[80,70,60,90]}],
+              xaxis:{categories:['Marketing','Prod Dev','Operations','Data Analytics']},
+              colors:[palette.primary]
+            }).render();
+
+            // Area
+            new ApexCharts(document.querySelector("#areaApex"), {
+              chart:{type:'area',height:300,animations:{enabled:false}},
+              series:[{name:'Spend ($)',data:[91800,94000,96500,98200,100400,102100,105300,108700,112200,116900,117100,124380]}],
+              xaxis:{categories:['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul']},
+              colors:[palette.primary]
+            }).render();
+
+            // -------------------- Chart.js --------------------
+            // Line Chart
+            const lineCtx = document.getElementById('lineChartJS').getContext('2d');
+            new Chart(lineCtx,{type:'line',data:{labels:['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'],datasets:[{label:'Spend ($)',data:[91800,94000,96500,98200,100400,102100,105300,108700,112200,116900,117100,124380],borderColor:palette.primary,backgroundColor:'transparent'}]},options:{responsive:true,maintainAspectRatio:false,animation:false}});
+
+            // Bar Chart
+            // const barCtx = document.getElementById('barChartJS').getContext('2d');
+            // new Chart(barCtx,{type:'bar',data:{labels:['Marketing','Prod Dev','Operations','Data Analytics'],datasets:[{label:'AWS Spend',data:[15350,28700,12500,9120],backgroundColor:palette.primary},{label:'Azure Spend',data:[12800,31200,15650,8950],backgroundColor:palette.secondary} ]},options:{responsive:true,maintainAspectRatio:false,animation:false,scales:{y:{beginAtZero:true}}}});
+
+            // Bar Chart with labels
+            const barCtx = document.getElementById('barChartJS').getContext('2d');
+            new Chart(barCtx, {
+              type:'bar',
+              data:{
+                labels:['Marketing','Prod Dev','Operations','Data Analytics'],
+                datasets:[
+                  {label:'AWS Spend',data:[15350,28700,12500,9120],backgroundColor:palette.primary},
+                  {label:'Azure Spend',data:[12800,31200,15650,8950],backgroundColor:palette.secondary}
+                ]
+              },
+              options:{
+                responsive:true,
+                maintainAspectRatio:false,
+                animation:false,
+                scales:{ y:{ beginAtZero:true } },
+                plugins:{
+                  datalabels:{
+                    anchor:'end',
+                    align:'end',
+                    color:'#000',
+                    formatter: (value) => '$' + value.toLocaleString()
+                  }
+                }
+              },
+              plugins: [ChartDataLabels]
+            });
+
+            // Stacked Bar
+            const stackedCtx = document.getElementById('stackedChartJS').getContext('2d');
+            new Chart(stackedCtx,{type:'bar',data:{labels:['Marketing','Prod Dev','Operations','Data Analytics'],datasets:[{label:'AWS',data:[15350,28700,12500,9120],backgroundColor:palette.primary,stack:'total'},{label:'Azure',data:[12800,31200,15650,8950],backgroundColor:palette.secondary,stack:'total'}]},options:{responsive:true,maintainAspectRatio:false,animation:false,scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true}}}});
+
+            // Mixed Line+Bar
+            const mixedCtx = document.getElementById('mixedChartJS').getContext('2d');
+            new Chart(mixedCtx,{data:{labels:['Marketing','Prod Dev','Operations','Data Analytics'],datasets:[{type:'bar',label:'Actual Spend',data:[28150,59900,28150,18070],backgroundColor:palette.primary, order: 1},{type:'line',label:'Budget',data:[29000,61000,28000,19000],borderColor:palette.accent,backgroundColor:'transparent',borderWidth:3,pointRadius:5,pointBackgroundColor:palette.accent, order: 2}]},options:{responsive:true,maintainAspectRatio:false,animation:false,scales:{y:{beginAtZero:true}}}});
+
+            // Pie
+            // new Chart(document.getElementById('pieChartJS'), {
+            //   type:'pie',
+            //   data:{
+            //     labels:['AWS','Azure','GCP','Other'],
+            //     datasets:[{data:[12800,15350,31200,28700],backgroundColor:[palette.primary,palette.secondary,'#F59E0B','#EF4444'] }]
+            //   },
+            //   options:{responsive:true,maintainAspectRatio:false,animation:false}
+            // });
+
+            // Pie Chart with % labels
+            new Chart(document.getElementById('pieChartJS'), {
+              type: 'pie',
+              data: {
+                labels: ['AWS','Azure','GCP','Other'],
+                datasets: [{
+                  data: [12800,15350,31200,28700],
+                  backgroundColor: [palette.primary,palette.secondary,'#F59E0B','#EF4444']
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                plugins: {
+                  datalabels: {
+                    color: '#fff',
+                    font: { weight: 'bold' },
+                    formatter: (value, context) => {
+                      const data = context.chart.data.datasets[0].data;
+                      const total = data.reduce((a,b) => a + b, 0);
+                      return ((value / total) * 100).toFixed(1) + '%';
+                    }
+                  }
+                }
+              },
+              plugins: [ChartDataLabels]
+            });
+
+            // Donut
+            // new Chart(document.getElementById('donutChartJS'), {
+            //   type:'doughnut',
+            //   data:{
+            //     labels:['AWS','Azure','GCP','Other'],
+            //     datasets:[{data:[12800,15350,31200,28700],backgroundColor:[palette.primary,palette.secondary,'#F59E0B','#EF4444'] }]
+            //   },
+            //   options:{responsive:true,maintainAspectRatio:false,animation:false}
+            // });
+
+            // Donut Chart with % labels
+            new Chart(document.getElementById('donutChartJS'), {
+              type: 'doughnut',
+              data: {
+                labels: ['AWS','Azure','GCP','Other'],
+                datasets: [{
+                  data: [12800,15350,31200,28700],
+                  backgroundColor: [palette.primary,palette.secondary,'#F59E0B','#EF4444']
+                }]
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                plugins: {
+                  datalabels: {
+                    color: '#fff',
+                    font: { weight: 'bold' },
+                    formatter: (value, context) => {
+                      const data = context.chart.data.datasets[0].data;
+                      const total = data.reduce((a,b) => a + b, 0);
+                      return ((value / total) * 100).toFixed(1) + '%';
+                    }
+                  }
+                }
+              },
+              plugins: [ChartDataLabels]
+            });
+            // Radar
+            new Chart(document.getElementById('radarChartJS'), {
+              type:'radar',
+              data:{
+                labels:['Marketing','Prod Dev','Operations','Data Analytics'],
+                datasets:[{label:'Efficiency',data:[80,70,60,90],backgroundColor:'rgba(10,35,66,0.2)',borderColor:palette.primary,pointBackgroundColor:palette.primary}]
+              },
+              options:{responsive:true,maintainAspectRatio:false,animation:false,scales:{r:{beginAtZero:true}}}
+            });
+
+            // Area (line with fill)
+            new Chart(document.getElementById('areaChartJS'), {
+              type:'line',
+              data:{
+                labels:['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'],
+                datasets:[{label:'Spend ($)',data:[91800,94000,96500,98200,100400,102100,105300,108700,112200,116900,117100,124380],borderColor:palette.primary,backgroundColor:'rgba(10,35,66,0.2)',fill:true}]
+              },
+              options:{responsive:true,maintainAspectRatio:false,animation:false}
+            });
+
+        </script>
+
+    </body>
+</html>

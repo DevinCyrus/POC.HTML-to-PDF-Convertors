@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="MockData\Chart Testing.html" />
     <None Remove="MockData\Cloud Overview - Cleaned - v1.html" />
     <None Remove="MockData\Cloud Overview - Cleaned - v2.html" />
     <None Remove="MockData\Cloud Overview - Cleaned - v3.html" />
@@ -22,6 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="MockData\Chart Testing.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="MockData\Cloud Overview - Cleaned - v1.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
