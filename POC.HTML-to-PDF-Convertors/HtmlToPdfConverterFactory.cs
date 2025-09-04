@@ -19,7 +19,7 @@ public class HtmlToPdfConverterFactory : IHtmlToPdfConverterFactory
 		{
 			"ironpdf" => _serviceProvider.GetRequiredService<IronPDFConverterService>(),
 			"puppeteer" => _serviceProvider.GetRequiredService<PuppeteerConverterService>(),
-			"microsoftplaywright" => _serviceProvider.GetRequiredService<MicrosoftPlaywrightConverterService>(),
+			"playwright" => _serviceProvider.GetRequiredService<MicrosoftPlaywrightConverterService>(),
 			"selectpdf" => _serviceProvider.GetRequiredService<SelectPDFConverterService>(),
 			_ => throw new ArgumentException($"Unknown engine {engineName}")
 		};

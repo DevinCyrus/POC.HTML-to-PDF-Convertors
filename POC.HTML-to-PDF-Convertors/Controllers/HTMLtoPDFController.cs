@@ -10,6 +10,7 @@ public class HTMLtoPDFController : ControllerBase
 {
 	private readonly IHtmlToPdfConverterFactory _factory;
 	private readonly string _genericReportPath = Path.Combine(AppContext.BaseDirectory, "MockData", "finops-report-apex-charts (disabled animations).html");
+	private readonly string _chartComparisonReportPath = Path.Combine(AppContext.BaseDirectory, "MockData", "Chart Testing.html");
 	private readonly string _cloudOverviewReportPath = Path.Combine(AppContext.BaseDirectory, "MockData", "Cloud Overview.html");
 	private readonly string _serviceReportPath = Path.Combine(AppContext.BaseDirectory, "MockData", "Report Service.html");
 	private readonly string _vendorReportPath = Path.Combine(AppContext.BaseDirectory, "MockData", "Updated Report Vendor.html");
@@ -49,6 +50,8 @@ public class HTMLtoPDFController : ControllerBase
 		var pdfBytes = await converter.ConvertFromHTMLFile(_testReportPath);
 
 		stopwatch.Stop();
+
+		// Attach duration in response header
 		Response.Headers["X-IronPDF-PDF-Generation-Time-ms"] = stopwatch.Elapsed.TotalMilliseconds.ToString("F0");
 
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
@@ -70,6 +73,8 @@ public class HTMLtoPDFController : ControllerBase
 		var pdfBytes = await converter.ConvertFromHTMLFile(_testReportPath);
 
 		stopwatch.Stop();
+
+		// Attach duration in response header
 		Response.Headers["X-Puppeteer-PDF-Generation-Time-ms"] = stopwatch.Elapsed.TotalMilliseconds.ToString("F0");
 
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
@@ -87,10 +92,12 @@ public class HTMLtoPDFController : ControllerBase
 
 		var stopwatch = Stopwatch.StartNew();
 
-		var converter = _factory.Get("microsoftplaywright");
+		var converter = _factory.Get("playwright");
 		var pdfBytes = await converter.ConvertFromHTMLFile(_testReportPath);
 
 		stopwatch.Stop();
+
+		// Attach duration in response header
 		Response.Headers["X-Playwright-PDF-Generation-Time-ms"] = stopwatch.Elapsed.TotalMilliseconds.ToString("F0");
 
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
@@ -106,6 +113,7 @@ public class HTMLtoPDFController : ControllerBase
 			3 => _cleanedCloudOverviewReportPathV3,
 			4 => _cleanedCloudOverviewReportPathV4,
 			5 => _cleanedCloudOverviewReportPath,
+			6 => _chartComparisonReportPath,
 			_ => _genericReportPath
 		};
 	}
