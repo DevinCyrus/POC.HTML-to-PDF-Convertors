@@ -1,5 +1,6 @@
 ﻿using Core.Services.Contracts;
 using PuppeteerSharp;
+using PuppeteerSharp.Media;
 
 namespace Puppeteer.Service;
 
@@ -36,8 +37,11 @@ public class PuppeteerConverterService : IHtmlToPdfConverter, IAsyncDisposable
 		// Load HTML on the new page
 		await page.GoToAsync(filePath);
 
+		// Additional page styling/options can be specified with PdfOptions
+		var pageOptions = new PdfOptions { Format = PaperFormat.A4 };
+
 		// Generate PDF from loaded HTML
-		var pdfBytes = await page.PdfDataAsync();
+		var pdfBytes = await page.PdfDataAsync(pageOptions);
 
 		// Manually close page (due to singleton context for headless browser)
 		await page.CloseAsync();

@@ -57,15 +57,15 @@ public class MicrosoftPlaywrightConverterService : IHtmlToPdfConverter
 
 		// Had varied results during testing with the below option
 		// I found not using this had best results, but that is most likely directly tied the the HTML of the report and its layout/styling
-		// Use screen media to preserve browser layout
+		// Consider using screen media to preserve browser layout
 		// https://playwright.dev/dotnet/docs/api/class-page#page-emulate-media
 		// await page.EmulateMediaAsync(new() { Media = Media.Screen });
 
+		// Additional page styling/options can be specified with PagePdfOptions
+		var pageOptions = new PagePdfOptions { Format = "A4" };
+
 		// Generate PDF from loaded HTML
-		var pdfBytes = await page.PdfAsync(new PagePdfOptions
-		{
-			Format = "A4"
-		});
+		var pdfBytes = await page.PdfAsync(pageOptions);
 
 		// Close the browser context and any pages for this session
 		await browserContext.CloseAsync();

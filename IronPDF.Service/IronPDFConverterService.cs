@@ -21,7 +21,7 @@ public class IronPDFConverterService : IHtmlToPdfConverter
 	public async Task<byte[]> ConvertFromHTMLFile(string filePath)
 	{
 		// Iron PDF handles the headless browser setup and PDF generation in a single call
-		// Styling/RenderingOptions should be set on the _renderer before calling the below method to generate a pdf
+		// Page styling/RenderingOptions should be set on the _renderer before calling the below method to generate a pdf
 		var pdf = await _renderer.RenderHtmlFileAsPdfAsync(filePath);
 
 		return pdf.BinaryData;
