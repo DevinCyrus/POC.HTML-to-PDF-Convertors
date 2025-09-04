@@ -51,8 +51,9 @@ public class HTMLtoPDFController : ControllerBase
 
 		stopwatch.Stop();
 
-		// Attach duration in response header
+		// Attach duration and file size to response headers
 		Response.Headers["X-IronPDF-PDF-Generation-Time-ms"] = stopwatch.Elapsed.TotalMilliseconds.ToString("F0");
+		Response.Headers["X-IronPDF-PDF-Generation-Size-KB"] = ((decimal)pdfBytes.Length / 1024).ToString("F3");
 
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
 	}
@@ -74,8 +75,9 @@ public class HTMLtoPDFController : ControllerBase
 
 		stopwatch.Stop();
 
-		// Attach duration in response header
+		// Attach duration and file size to response headers
 		Response.Headers["X-Puppeteer-PDF-Generation-Time-ms"] = stopwatch.Elapsed.TotalMilliseconds.ToString("F0");
+		Response.Headers["X-Puppeteer-PDF-Generation-Size-KB"] = ((decimal)pdfBytes.Length / 1024).ToString("F3");
 
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
 	}
@@ -97,8 +99,10 @@ public class HTMLtoPDFController : ControllerBase
 
 		stopwatch.Stop();
 
-		// Attach duration in response header
+		// Attach duration and file size to response headers
 		Response.Headers["X-Playwright-PDF-Generation-Time-ms"] = stopwatch.Elapsed.TotalMilliseconds.ToString("F0");
+		Response.Headers["X-Playwright-PDF-Generation-Size-KB"] = ((decimal)pdfBytes.Length / 1024).ToString("F3");
+
 
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
 	}
