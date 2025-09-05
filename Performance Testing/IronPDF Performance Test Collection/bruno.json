@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "IronPDF Performance Test Collection - Use Bruno Runner",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

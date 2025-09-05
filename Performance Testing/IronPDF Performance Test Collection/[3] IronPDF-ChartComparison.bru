@@ -1,0 +1,16 @@
+meta {
+  name: [3] IronPDF-ChartComparison
+  type: http
+  seq: 3
+}
+
+get {
+  url: https://localhost:7075/HTMLtoPDF/IronPDFSDK/:reportNumber/:outputFileName
+  body: none
+  auth: inherit
+}
+
+params:path {
+  reportNumber: 6
+  outputFileName: IronPDF-Genertated-PDF
+}

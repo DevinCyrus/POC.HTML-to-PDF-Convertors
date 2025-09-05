@@ -1,0 +1,16 @@
+meta {
+  name: [9] IronPDF-CloudOverviewReport
+  type: http
+  seq: 30
+}
+
+get {
+  url: https://localhost:7075/HTMLtoPDF/IronPDFSDK/:reportNumber/:outputFileName
+  body: none
+  auth: inherit
+}
+
+params:path {
+  reportNumber: 5
+  outputFileName: IronPDF-Genertated-PDF
+}
