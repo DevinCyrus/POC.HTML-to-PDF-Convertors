@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>POC.HTML_to_PDF_Convertors</RootNamespace>
+    <UserSecretsId>c0d30082-50ca-4771-90aa-f651027235d8</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

@@ -47,6 +47,14 @@ builder.Services.AddSingleton<PuppeteerSharpConverterService>(sp =>
 	return new PuppeteerSharpConverterService(browser);
 });
 
+// IronPDF offers a ~7day free trial with no requirements
+// If your ~7day trial expires, you can request an extended 30day trial, you will just need to provide an email.
+// https://ironpdf.com/#trial-license
+// Once you receive your license, add it to your user secrets with the following alias "IronPDF-30day-Trial-License"
+
+// Set the IronPdf license key
+IronPdf.License.LicenseKey = builder.Configuration["IronPDF-30day-Trial-License"];
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
