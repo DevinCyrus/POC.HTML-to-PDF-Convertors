@@ -66,7 +66,7 @@
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\IronPDF.Service\IronPDF.Service.csproj" />
     <ProjectReference Include="..\MicrosoftPlaywright.Service\MicrosoftPlaywright.Service.csproj" />
-    <ProjectReference Include="..\Puppeteer.Service\Puppeteer.Service.csproj" />
+    <ProjectReference Include="..\Puppeteer.Service\PuppeteerSharp.Service.csproj" />
     <ProjectReference Include="..\SelectPDF.Service\SelectPDF.Service.csproj" />
   </ItemGroup>
 

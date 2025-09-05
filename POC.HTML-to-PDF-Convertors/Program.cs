@@ -35,13 +35,13 @@ builder.Services.AddSingleton<MicrosoftPlaywrightConverterService>(sp =>
 });
 
 // Create Puppeteer Browser once for the app lifetime
-builder.Services.AddSingleton<PuppeteerConverterService>(sp =>
+builder.Services.AddSingleton<PuppeteerSharpConverterService>(sp =>
 {
 	new BrowserFetcher().DownloadAsync().GetAwaiter().GetResult();
 	var browser = PuppeteerSharp.Puppeteer.LaunchAsync(new LaunchOptions { Headless = true })
 		.GetAwaiter().GetResult();
 
-	return new PuppeteerConverterService(browser);
+	return new PuppeteerSharpConverterService(browser);
 });
 
 var app = builder.Build();

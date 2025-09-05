@@ -1,14 +1,13 @@
 ﻿using Core.Services.Contracts;
-using PuppeteerSharp;
 using PuppeteerSharp.Media;
 
-namespace Puppeteer.Service;
+namespace PuppeteerSharp.Service;
 
-public class PuppeteerConverterService : IHtmlToPdfConverter, IAsyncDisposable
+public class PuppeteerSharpConverterService : IHtmlToPdfConverter, IAsyncDisposable
 {
 	private readonly IBrowser _browser;
 
-	public PuppeteerConverterService(IBrowser browser)
+	public PuppeteerSharpConverterService(IBrowser browser)
 	{
 		_browser = browser;
 	}
