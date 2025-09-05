@@ -27,7 +27,7 @@ public class HTMLtoPDFController : ControllerBase
 	private readonly string _cleanedCloudOverviewReportPathV4 = Path.Combine(AppContext.BaseDirectory, "MockData", "Cloud Overview - Cleaned - v4.html");
 	#endregion
 
-	#region Helper class used to switch reports for performance testing
+	#region Helper class used to switch reports based on endpoint passed param
 	private void setReportPath(int reportNumber)
 	{
 		_testReportPath = reportNumber switch
