@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "name": "Puppeteer Performance Test Collection - Use Bruno Runner",
+  "name": "Playwright Performance Test Collection - Use Bruno Runner",
   "type": "collection",
   "ignore": [
     "node_modules",

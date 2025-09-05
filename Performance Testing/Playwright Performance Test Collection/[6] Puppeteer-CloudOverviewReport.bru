@@ -1,0 +1,16 @@
+meta {
+  name: [6] Playwright-CloudOverviewReport
+  type: http
+  seq: 27
+}
+
+get {
+  url: https://localhost:7075/HTMLtoPDF/PlaywrightSDK/:reportNumber/:outputFileName
+  body: none
+  auth: inherit
+}
+
+params:path {
+  reportNumber: 5
+  outputFileName: Playwright-Genertated-PDF
+}
