@@ -26,10 +26,12 @@ public class HTMLtoPDFController : ControllerBase
 	private readonly string _cleanedCloudOverviewReportPathV4 = Path.Combine(AppContext.BaseDirectory, "MockData", "Cloud Overview - Cleaned - v4.html");
 
 	private string _testReportPath;
+	private PerformanceLogger _perfLogger;
 
-	public HTMLtoPDFController(IHtmlToPdfConverterFactory factory)
+	public HTMLtoPDFController(IHtmlToPdfConverterFactory factory, PerformanceLogger perfLogger)
 	{
 		_factory = factory;
+		_perfLogger = perfLogger;
 
 		_testReportPath = _cleanedCloudOverviewReportPath;
 	}
@@ -51,20 +53,27 @@ public class HTMLtoPDFController : ControllerBase
 
 		stopwatch.Stop();
 
+		// Log performance stats
+		var duration = stopwatch.Elapsed.TotalMilliseconds.ToString("F0");
+		var fileSize = ((decimal)pdfBytes.Length / 1024).ToString("F3");
+		var reportName = Path.GetFileName(_testReportPath);
+
+		_perfLogger.Log("IronPDF", reportName, duration, fileSize);
+
 		// Attach duration and file size to response headers
-		Response.Headers["X-IronPDF-PDF-Generation-Time-ms"] = stopwatch.Elapsed.TotalMilliseconds.ToString("F0");
-		Response.Headers["X-IronPDF-PDF-Generation-Size-KB"] = ((decimal)pdfBytes.Length / 1024).ToString("F3");
+		Response.Headers["X-IronPDF-PDF-Generation-Time-ms"] = duration;
+		Response.Headers["X-IronPDF-PDF-Generation-Size-KB"] = fileSize;
 
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
 	}
 
 	/// <summary>
-	/// Generate report PDF using Puppeteer and include duration with processing duration in header
+	/// Generate report PDF using PuppeteerSharp and include duration with processing duration in header
 	/// </summary>
 	/// <param name="reportNumber">There are multiple versions of the same report (1-6) just with varied layout ordering, this is used for performance testing so that calls can be for different reports to try avoid any hidden caching that may skew results.</param>
 	/// <param name="outputFileName">The name that the generated report file will have.</param>
-	[HttpGet("PuppeteerSDK/{reportNumber}/{outputFileName}")]
-	public async Task<IActionResult> GetPuppeteerGeneratedPDF([FromRoute] string outputFileName, [FromRoute] int reportNumber = 6)
+	[HttpGet("PuppeteerSharpSDK/{reportNumber}/{outputFileName}")]
+	public async Task<IActionResult> GetPuppeteerSharpGeneratedPDF([FromRoute] string outputFileName, [FromRoute] int reportNumber = 6)
 	{
 		setReportPath(reportNumber);
 
@@ -75,9 +84,16 @@ public class HTMLtoPDFController : ControllerBase
 
 		stopwatch.Stop();
 
+		// Log performance stats
+		var duration = stopwatch.Elapsed.TotalMilliseconds.ToString("F0");
+		var fileSize = ((decimal)pdfBytes.Length / 1024).ToString("F3");
+		var reportName = Path.GetFileName(_testReportPath);
+
+		_perfLogger.Log("PuppeteerSharp", reportName, duration, fileSize);
+
 		// Attach duration and file size to response headers
-		Response.Headers["X-Puppeteer-PDF-Generation-Time-ms"] = stopwatch.Elapsed.TotalMilliseconds.ToString("F0");
-		Response.Headers["X-Puppeteer-PDF-Generation-Size-KB"] = ((decimal)pdfBytes.Length / 1024).ToString("F3");
+		Response.Headers["X-Puppeteer-PDF-Generation-Time-ms"] = duration;
+		Response.Headers["X-Puppeteer-PDF-Generation-Size-KB"] = fileSize;
 
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
 	}
@@ -99,9 +115,16 @@ public class HTMLtoPDFController : ControllerBase
 
 		stopwatch.Stop();
 
+		// Log performance stats
+		var duration = stopwatch.Elapsed.TotalMilliseconds.ToString("F0");
+		var fileSize = ((decimal)pdfBytes.Length / 1024).ToString("F3");
+		var reportName = Path.GetFileName(_testReportPath);
+
+		_perfLogger.Log("Playwright", reportName, duration, fileSize);
+
 		// Attach duration and file size to response headers
-		Response.Headers["X-Playwright-PDF-Generation-Time-ms"] = stopwatch.Elapsed.TotalMilliseconds.ToString("F0");
-		Response.Headers["X-Playwright-PDF-Generation-Size-KB"] = ((decimal)pdfBytes.Length / 1024).ToString("F3");
+		Response.Headers["X-Playwright-PDF-Generation-Time-ms"] = duration;
+		Response.Headers["X-Playwright-PDF-Generation-Size-KB"] = fileSize;
 
 
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");

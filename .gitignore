@@ -45,3 +45,6 @@ TestResults/
 
 # Publish output
 publish/
+
+# PerformanceLogger Logs
+PdfPerfLogs/

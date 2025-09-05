@@ -2,8 +2,9 @@ using Core.Services.Contracts;
 using Microsoft.Playwright;
 using MicrosoftPlaywright.Service;
 using PDForgePlayWrite.Service;
-using Puppeteer.Service;
+using POC.HTML_to_PDF_Convertors;
 using PuppeteerSharp;
+using PuppeteerSharp.Service;
 using SelectPDF.Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,8 @@ builder.Services.AddScoped<IronPDFConverterService>();
 //builder.Services.AddScoped<MicrosoftPlaywrightConverterService>();
 builder.Services.AddScoped<SelectPDFConverterService>();
 builder.Services.AddScoped<IHtmlToPdfConverterFactory, HtmlToPdfConverterFactory>();
+
+builder.Services.AddSingleton<PerformanceLogger>();
 
 // Create Playwright + Browser once for the app lifetime
 builder.Services.AddSingleton<MicrosoftPlaywrightConverterService>(sp =>
