@@ -8,6 +8,7 @@ public class IronPDFConverterService : IHtmlToPdfConverter
 
 	public IronPDFConverterService()
 	{
+		// Initialize ChromePdfRenderer for file conversion
 		_renderer = new ChromePdfRenderer();
 
 		//// Can optionally set global defaults here, e.g.
@@ -19,10 +20,10 @@ public class IronPDFConverterService : IHtmlToPdfConverter
 
 	public async Task<byte[]> ConvertFromHTMLFile(string filePath)
 	{
-		return await Task.Run(() =>
-		{
-			var pdf = _renderer.RenderHtmlFileAsPdf(filePath);
-			return pdf.BinaryData;
-		});
+		// Iron PDF handles the headless browser setup and PDF generation in a single call
+		// Page styling/RenderingOptions should be set on the _renderer before calling the below method to generate a pdf
+		var pdf = await _renderer.RenderHtmlFileAsPdfAsync(filePath);
+
+		return pdf.BinaryData;
 	}
 }

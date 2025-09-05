@@ -1,7 +1,7 @@
 ﻿using Core.Services.Contracts;
 using MicrosoftPlaywright.Service;
 using PDForgePlayWrite.Service;
-using Puppeteer.Service;
+using PuppeteerSharp.Service;
 using SelectPDF.Service;
 
 public class HtmlToPdfConverterFactory : IHtmlToPdfConverterFactory
@@ -18,8 +18,8 @@ public class HtmlToPdfConverterFactory : IHtmlToPdfConverterFactory
 		return engineName.ToLower() switch
 		{
 			"ironpdf" => _serviceProvider.GetRequiredService<IronPDFConverterService>(),
-			"puppeteer" => _serviceProvider.GetRequiredService<PuppeteerConverterService>(),
-			"microsoftplaywright" => _serviceProvider.GetRequiredService<MicrosoftPlaywrightConverterService>(),
+			"puppeteer" => _serviceProvider.GetRequiredService<PuppeteerSharpConverterService>(),
+			"playwright" => _serviceProvider.GetRequiredService<MicrosoftPlaywrightConverterService>(),
 			"selectpdf" => _serviceProvider.GetRequiredService<SelectPDFConverterService>(),
 			_ => throw new ArgumentException($"Unknown engine {engineName}")
 		};

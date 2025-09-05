@@ -1,0 +1,16 @@
+meta {
+  name: [10] Playwright-ChartComparison
+  type: http
+  seq: 10
+}
+
+get {
+  url: https://localhost:7075/HTMLtoPDF/PlaywrightSDK/:reportNumber/:outputFileName
+  body: none
+  auth: inherit
+}
+
+params:path {
+  reportNumber: 6
+  outputFileName: Playwright-Genertated-PDF
+}

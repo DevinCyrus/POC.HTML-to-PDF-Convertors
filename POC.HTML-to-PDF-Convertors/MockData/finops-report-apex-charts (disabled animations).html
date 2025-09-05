@@ -48,7 +48,9 @@
     .note{font-size:12px;color:var(--muted)}
     .footer{position:fixed;bottom:12px;left:0;right:0;text-align:center;font-size:11px;color:var(--muted)}
     @page{size:A4;margin:16mm}
-    .page-break{page-break-before:always}
+  	.page-break {
+  		break-before: page;
+  	}
     .no-break{page-break-inside:avoid}
     * {
       -webkit-print-color-adjust: exact !important;
@@ -119,7 +121,7 @@
     </section>
 
     <!-- Top Spenders -->
-    <section class="section">
+    <section class="section page-break">
       <h2>Top Cost Drivers</h2>
       <div class="card">
         <table>

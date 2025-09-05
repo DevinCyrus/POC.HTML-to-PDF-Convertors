@@ -1,0 +1,16 @@
+meta {
+  name: [7] Playwright-GenericReport
+  type: http
+  seq: 18
+}
+
+get {
+  url: https://localhost:7075/HTMLtoPDF/PlaywrightSDK/:reportNumber/:outputFileName
+  body: none
+  auth: inherit
+}
+
+params:path {
+  reportNumber: 0
+  outputFileName: Playwright-Genertated-PDF
+}
