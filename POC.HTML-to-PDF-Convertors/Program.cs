@@ -5,7 +5,6 @@ using PDForgePlayWrite.Service;
 using POC.HTML_to_PDF_Convertors;
 using PuppeteerSharp;
 using PuppeteerSharp.Service;
-using SelectPDF.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +16,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IronPDFConverterService>();
+
 // Removed to implement singleton browsers for performance gains
 //builder.Services.AddScoped<PuppeteerConverterService>();
 //builder.Services.AddScoped<MicrosoftPlaywrightConverterService>();
-builder.Services.AddScoped<SelectPDFConverterService>();
+
+// Removed as can't handle dynamic javscript
+//builder.Services.AddScoped<SelectPDFConverterService>();
+
 builder.Services.AddScoped<IHtmlToPdfConverterFactory, HtmlToPdfConverterFactory>();
 
 builder.Services.AddSingleton<PerformanceLogger>();
