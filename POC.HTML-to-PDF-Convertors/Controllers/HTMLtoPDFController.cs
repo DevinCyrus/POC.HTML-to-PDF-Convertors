@@ -8,6 +8,7 @@ namespace POC.HTML_to_PDF_Convertors.Controllers;
 [Route("[controller]")]
 public class HTMLtoPDFController : ControllerBase
 {
+	#region Various Mock HTML Reports for testing PDF generation
 	private readonly IHtmlToPdfConverterFactory _factory;
 	private readonly string _genericReportPath = Path.Combine(AppContext.BaseDirectory, "MockData", "finops-report-apex-charts (disabled animations).html");
 	private readonly string _chartComparisonReportPath = Path.Combine(AppContext.BaseDirectory, "MockData", "Chart Testing.html");
@@ -24,6 +25,23 @@ public class HTMLtoPDFController : ControllerBase
 	private readonly string _cleanedCloudOverviewReportPathV2 = Path.Combine(AppContext.BaseDirectory, "MockData", "Cloud Overview - Cleaned - v2.html");
 	private readonly string _cleanedCloudOverviewReportPathV3 = Path.Combine(AppContext.BaseDirectory, "MockData", "Cloud Overview - Cleaned - v3.html");
 	private readonly string _cleanedCloudOverviewReportPathV4 = Path.Combine(AppContext.BaseDirectory, "MockData", "Cloud Overview - Cleaned - v4.html");
+	#endregion
+
+	#region Helper class used to switch reports for performance testing
+	private void setReportPath(int reportNumber)
+	{
+		_testReportPath = reportNumber switch
+		{
+			1 => _cleanedCloudOverviewReportPathV1,
+			2 => _cleanedCloudOverviewReportPathV2,
+			3 => _cleanedCloudOverviewReportPathV3,
+			4 => _cleanedCloudOverviewReportPathV4,
+			5 => _cleanedCloudOverviewReportPath,
+			6 => _chartComparisonReportPath,
+			_ => _genericReportPath
+		};
+	}
+	#endregion
 
 	private string _testReportPath;
 	private PerformanceLogger _perfLogger;
@@ -128,21 +146,6 @@ public class HTMLtoPDFController : ControllerBase
 
 
 		return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
-	}
-
-	// Helper class used to switch reports for performance testing
-	private void setReportPath(int reportNumber)
-	{
-		_testReportPath = reportNumber switch
-		{
-			1 => _cleanedCloudOverviewReportPathV1,
-			2 => _cleanedCloudOverviewReportPathV2,
-			3 => _cleanedCloudOverviewReportPathV3,
-			4 => _cleanedCloudOverviewReportPathV4,
-			5 => _cleanedCloudOverviewReportPath,
-			6 => _chartComparisonReportPath,
-			_ => _genericReportPath
-		};
 	}
 
 	// Hiding endpoint SelectPDF cannot handle dynamic javascript
