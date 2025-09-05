@@ -1,0 +1,16 @@
+meta {
+  name: [1] Puppeteer-CloudOverviewReport
+  type: http
+  seq: 22
+}
+
+get {
+  url: https://localhost:7075/HTMLtoPDF/PuppeteerSharpSDK/:reportNumber/:outputFileName
+  body: none
+  auth: inherit
+}
+
+params:path {
+  reportNumber: 5
+  outputFileName: Puppeteer-Genertated-PDF
+}
