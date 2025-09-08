@@ -26,4 +26,13 @@ public class IronPDFConverterService : IHtmlToPdfConverter
 
 		return pdf.BinaryData;
 	}
+
+	public async Task<byte[]> ConvertFromHTMLString(string html)
+	{
+		// Iron PDF handles the headless browser setup and PDF generation in a single call
+		// Page styling/RenderingOptions should be set on the _renderer before calling the below method to generate a pdf
+		var pdf = await _renderer.RenderHtmlAsPdfAsync(html);
+
+		return pdf.BinaryData;
+	}
 }

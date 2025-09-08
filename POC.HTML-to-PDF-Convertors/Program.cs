@@ -5,6 +5,7 @@ using PDForgePlayWrite.Service;
 using POC.HTML_to_PDF_Convertors;
 using PuppeteerSharp;
 using PuppeteerSharp.Service;
+using ReportTemplating.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,7 @@ builder.Services.AddScoped<IronPDFConverterService>();
 //builder.Services.AddScoped<SelectPDFConverterService>();
 
 builder.Services.AddScoped<IHtmlToPdfConverterFactory, HtmlToPdfConverterFactory>();
+builder.Services.AddScoped<ReportTemplatingService>();
 
 builder.Services.AddSingleton<PerformanceLogger>();
 

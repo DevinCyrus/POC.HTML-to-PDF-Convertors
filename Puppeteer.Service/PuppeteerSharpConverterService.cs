@@ -48,4 +48,32 @@ public class PuppeteerSharpConverterService : IHtmlToPdfConverter, IAsyncDisposa
 		return pdfBytes;
 	}
 
+	public async Task<byte[]> ConvertFromHTMLString(string html)
+	{
+		#region Transient headless browser implementation
+		// The below implementation has major performance drawbacks - currently implemented as singleton at startup to reduce overhead
+		// This browser download will likely need to be handled more elegantly in a production environment
+		//await new BrowserFetcher().DownloadAsync();
+		//using var browser = await PuppeteerSharp.Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
+		//using var page = await browser.NewPageAsync();
+		#endregion
+
+		// Open new page on singleton headless browser
+		using var page = await _browser.NewPageAsync();
+
+		// Inject HTML into the new page
+		await page.SetContentAsync(html);
+
+		// Additional page styling/options can be specified with PdfOptions
+		var pageOptions = new PdfOptions { Format = PaperFormat.A4 };
+
+		// Generate PDF from loaded HTML
+		var pdfBytes = await page.PdfDataAsync(pageOptions);
+
+		// Manually close page (due to singleton context for headless browser)
+		await page.CloseAsync();
+
+		return pdfBytes;
+	}
+
 }

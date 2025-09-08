@@ -1,5 +1,7 @@
 ﻿using Core.Services.Contracts;
+using DataContracts.RequestDTO;
 using Microsoft.AspNetCore.Mvc;
+using ReportTemplating.Service;
 using System.Diagnostics;
 
 namespace POC.HTML_to_PDF_Convertors.Controllers;
@@ -45,11 +47,13 @@ public class HTMLtoPDFController : ControllerBase
 
 	private string _testReportPath;
 	private PerformanceLogger _perfLogger;
+	private readonly ReportTemplatingService _razor;
 
-	public HTMLtoPDFController(IHtmlToPdfConverterFactory factory, PerformanceLogger perfLogger)
+	public HTMLtoPDFController(IHtmlToPdfConverterFactory factory, PerformanceLogger perfLogger, ReportTemplatingService razor)
 	{
 		_factory = factory;
 		_perfLogger = perfLogger;
+		_razor = razor;
 
 		_testReportPath = _cleanedCloudOverviewReportPath;
 	}
@@ -157,4 +161,18 @@ public class HTMLtoPDFController : ControllerBase
 	//	var pdfBytes = await converter.ConvertFromHTMLFile(_testReportPath);
 	//	return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
 	//}
+
+	[HttpPost("generate")]
+	public async Task<IActionResult> GenerateReportPDF([FromBody] ReportRequest request)
+	{
+		// 1. Render Razor template to string
+		var html = await _razor.RenderAsync("Demo Razor Report.cshtml", request);
+
+		// 2. Convert HTML to PDF (Puppeteer as example)
+		var converter = _factory.Get(request.SDK);
+		var pdfBytes = await converter.ConvertFromHTMLString(html);
+
+		// 3. Return file
+		return File(pdfBytes, "application/pdf", request.Title + ".pdf");
+	}
 }
