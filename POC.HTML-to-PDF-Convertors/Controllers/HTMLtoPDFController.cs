@@ -162,7 +162,7 @@ public class HTMLtoPDFController : ControllerBase
 	//	return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
 	//}
 
-	[HttpPost("generate")]
+	[HttpPost("generate/pdf")]
 	public async Task<IActionResult> GenerateReportPDF([FromBody] ReportRequest request)
 	{
 		// 1. Render Razor template to string
@@ -174,5 +174,18 @@ public class HTMLtoPDFController : ControllerBase
 
 		// 3. Return file
 		return File(pdfBytes, "application/pdf", request.Title + ".pdf");
+	}
+
+	[HttpPost("generate/html")]
+	public async Task<IActionResult> GenerateReportHTML([FromBody] ReportRequest request)
+	{
+		// 1. Render Razor template to string
+		var html = await _razor.RenderAsync("Demo Razor Report.cshtml", request);
+
+		// 2. Convert string to byte[] using UTF-8 encoding
+		var htmlBytes = System.Text.Encoding.UTF8.GetBytes(html);
+
+		// 3. Return file as HTML
+		return File(htmlBytes, "text/html", request.Title + ".html");
 	}
 }
