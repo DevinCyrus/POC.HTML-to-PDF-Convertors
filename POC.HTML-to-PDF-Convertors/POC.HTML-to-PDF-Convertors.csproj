@@ -76,10 +76,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Report Templates\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Content Update="Report Templates\Demo Razor Report - Dynamic Data Sets.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Update="Report Templates\Demo Razor Report.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

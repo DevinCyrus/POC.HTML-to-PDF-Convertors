@@ -166,7 +166,7 @@ public class HTMLtoPDFController : ControllerBase
 	public async Task<IActionResult> GenerateReportPDF([FromBody] ReportRequest request)
 	{
 		// 1. Render Razor template to string
-		var html = await _razor.RenderAsync("Demo Razor Report.cshtml", request);
+		var html = await _razor.RenderAsync("Demo Razor Report - Dynamic Data Sets.cshtml", request);
 
 		// 2. Convert HTML to PDF (Puppeteer as example)
 		var converter = _factory.Get(request.SDK);
@@ -180,7 +180,7 @@ public class HTMLtoPDFController : ControllerBase
 	public async Task<IActionResult> GenerateReportHTML([FromBody] ReportRequest request)
 	{
 		// 1. Render Razor template to string
-		var html = await _razor.RenderAsync("Demo Razor Report.cshtml", request);
+		var html = await _razor.RenderAsync("Demo Razor Report - Dynamic Data Sets.cshtml", request);
 
 		// 2. Convert string to byte[] using UTF-8 encoding
 		var htmlBytes = System.Text.Encoding.UTF8.GetBytes(html);

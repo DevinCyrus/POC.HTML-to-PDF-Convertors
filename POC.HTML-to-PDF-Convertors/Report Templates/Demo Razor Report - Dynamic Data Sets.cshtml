@@ -1,0 +1,256 @@
+@using DataContracts.RequestDTO;
+@using System.Text.Json
+
+@functions {
+    public Microsoft.AspNetCore.Html.HtmlString Raw(string value)
+    {
+        return new Microsoft.AspNetCore.Html.HtmlString(value);
+    }
+}
+
+
+@model ReportRequest
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinOps Test PDF Report - Apex vs Chart.js</title>
+
+    <!-- Chart Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+
+    <!-- Fonts & Styling -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+      body { font-family:'Inter', sans-serif; background:#f8fafc; color:#1f2937; margin:0; padding:0; }
+      h1,h2,h3{margin:0 0 .5rem 0;}
+      h1{font-size:28px;} h2{font-size:22px;} h3{font-size:18px;}
+      .container {max-width:900px; margin:0 auto; padding:24px;}
+      .section {margin-top:32px; page-break-inside: avoid;}
+      .page-break {break-before: page;}
+      .chart-card {background:#ffffff; border-radius:12px; padding:20px; margin-bottom:32px; box-shadow:0 4px 12px rgba(0,0,0,0.05);}
+      canvas, .apexchart {width:100% !important; height:300px !important;}
+      @@page {size:A4; margin:16mm;}
+      @@media print {
+          .apexcharts-toolbar { display: none !important; }
+      }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="section">
+        <h1>FinOps Test PDF Report</h1>
+        <p>Comparison of ApexCharts vs Chart.js for multiple chart types in PDF-friendly layouts.</p>
+    </header>
+
+    @* ----------- LINE ----------- *@
+    @if (Model.IncludeLineCharts)
+    {
+        <section class="section chart-card">
+            <h2>[ApexCharts] Monthly Cloud Spend Trend</h2>
+            <div id="lineApex"></div>
+        </section>
+        <section class="section chart-card">
+            <h2>[Chart.js] Monthly Cloud Spend Trend</h2>
+            <canvas id="lineChartJS"></canvas>
+        </section>
+    }
+
+    @* ----------- BAR ----------- *@
+    @if (Model.IncludeBarCharts)
+    {
+        <section class="section chart-card page-break">
+            <h2>[ApexCharts] Business Unit Monthly Spend</h2>
+            <div id="barApex"></div>
+        </section>
+        <section class="section chart-card">
+            <h2>[Chart.js] Business Unit Monthly Spend</h2>
+            <canvas id="barChartJS"></canvas>
+        </section>
+    }
+
+    @* ----------- STACKED ----------- *@
+    @if (Model.IncludeStackedCharts)
+    {
+        <section class="section chart-card page-break">
+            <h2>[ApexCharts] Business Unit vs Budget (Stacked)</h2>
+            <div id="stackedApex"></div>
+        </section>
+        <section class="section chart-card">
+            <h2>[Chart.js] Business Unit vs Budget (Stacked)</h2>
+            <canvas id="stackedChartJS"></canvas>
+        </section>
+    }
+
+    @* ----------- MIXED ----------- *@
+    @if (Model.IncludeMixedCharts)
+    {
+        <section class="section chart-card page-break">
+            <h2>[ApexCharts] Cloud Spend vs Budget (Mixed)</h2>
+            <div id="mixedApex"></div>
+        </section>
+        <section class="section chart-card">
+            <h2>[Chart.js] Cloud Spend vs Budget (Mixed)</h2>
+            <canvas id="mixedChartJS"></canvas>
+        </section>
+    }
+
+    @* ----------- PIE ----------- *@
+    @if (Model.IncludePieCharts)
+    {
+        <section class="section chart-card page-break">
+            <h2>[ApexCharts] Cloud Spend Distribution (Pie)</h2>
+            <div id="pieApex"></div>
+        </section>
+        <section class="section chart-card">
+            <h2>[Chart.js] Cloud Spend Distribution (Pie)</h2>
+            <canvas id="pieChartJS"></canvas>
+        </section>
+    }
+
+    @* ----------- DONUT ----------- *@
+    @if (Model.IncludeDonutCharts)
+    {
+        <section class="section chart-card page-break">
+            <h2>[ApexCharts] Cloud Spend Distribution (Donut)</h2>
+            <div id="donutApex"></div>
+        </section>
+        <section class="section chart-card">
+            <h2>[Chart.js] Cloud Spend Distribution (Donut)</h2>
+            <canvas id="donutChartJS"></canvas>
+        </section>
+    }
+
+    @* ----------- RADAR ----------- *@
+    @if (Model.IncludeRadarCharts)
+    {
+        <section class="section chart-card page-break">
+            <h2>[ApexCharts] Cost Efficiency Radar</h2>
+            <div id="radarApex"></div>
+        </section>
+        <section class="section chart-card">
+            <h2>[Chart.js] Cost Efficiency Radar</h2>
+            <canvas id="radarChartJS"></canvas>
+        </section>
+    }
+
+    @* ----------- AREA ----------- *@
+    @if (Model.IncludeAreaCharts)
+    {
+        <section class="section chart-card page-break">
+            <h2>[ApexCharts] Monthly Cloud Spend Area</h2>
+            <div id="areaApex"></div>
+        </section>
+        <section class="section chart-card">
+            <h2>[Chart.js] Monthly Cloud Spend Area</h2>
+            <canvas id="areaChartJS"></canvas>
+        </section>
+    }
+</div>
+
+<script>
+    const palette = { primary:'#0A2342', secondary:'#2CA58D', accent:'#87255B' };
+
+    // expose model data as plain JS objects
+    const chartData = {
+        line: {
+            labels: @Raw(JsonSerializer.Serialize(Model.LineLabels)),
+            values: @Raw(JsonSerializer.Serialize(Model.LineValues))
+        },
+        bar: {
+            labels: @Raw(JsonSerializer.Serialize(Model.BarLabels)),
+            aws: @Raw(JsonSerializer.Serialize(Model.AwsBarValues)),
+            azure: @Raw(JsonSerializer.Serialize(Model.AzureBarValues))
+        },
+        mixed: {
+            labels: @Raw(JsonSerializer.Serialize(Model.MixedLabels)),
+            actual: @Raw(JsonSerializer.Serialize(Model.ActualSpend)),
+            budget: @Raw(JsonSerializer.Serialize(Model.Budget))
+        },
+        pie: {
+            labels: @Raw(JsonSerializer.Serialize(Model.CloudVendors)),
+            values: @Raw(JsonSerializer.Serialize(Model.CloudSpend))
+        },
+        radar: {
+            labels: @Raw(JsonSerializer.Serialize(Model.RadarLabels)),
+            values: @Raw(JsonSerializer.Serialize(Model.Efficiency))
+        },
+        area: {
+            labels: @Raw(JsonSerializer.Serialize(Model.AreaLabels)),
+            values: @Raw(JsonSerializer.Serialize(Model.AreaValues))
+        }
+    };
+
+    // ------------------ APEX ------------------
+    @if (Model.IncludeLineCharts)
+    {
+        @:new ApexCharts(document.querySelector("#lineApex"), { chart:{type:'line',height:280,animations:{enabled:false}}, series:[{name:'Spend ($)',data:chartData.line.values}], xaxis:{categories:chartData.line.labels}, colors:[palette.primary]}).render();
+    }
+    @if (Model.IncludeBarCharts)
+    {
+        @:new ApexCharts(document.querySelector("#barApex"), { chart:{type:'bar',height:280,animations:{enabled:false}}, series:[{name:'AWS Spend',data:chartData.bar.aws},{name:'Azure Spend',data:chartData.bar.azure}], xaxis:{categories:chartData.bar.labels}, colors:[palette.primary,palette.secondary]}).render();
+    }
+    @if (Model.IncludeStackedCharts)
+    {
+        @:new ApexCharts(document.querySelector("#stackedApex"), { chart:{type:'bar',height:280,stacked:true,animations:{enabled:false}}, series:[{name:'AWS',data:chartData.bar.aws},{name:'Azure',data:chartData.bar.azure}], xaxis:{categories:chartData.bar.labels}, colors:[palette.primary,palette.secondary]}).render();
+    }
+    @if (Model.IncludeMixedCharts)
+    {
+        @:new ApexCharts(document.querySelector("#mixedApex"), { chart:{type:'line',height:280,animations:{enabled:false}}, series:[{name:'Actual Spend',type:'column',data:chartData.mixed.actual},{name:'Budget',type:'line',data:chartData.mixed.budget}], xaxis:{categories:chartData.mixed.labels}, colors:[palette.primary,palette.accent]}).render();
+    }
+    @if (Model.IncludePieCharts)
+    {
+        @:new ApexCharts(document.querySelector("#pieApex"), { chart:{type:'pie',height:300,animations:{enabled:false}}, series:chartData.pie.values, labels:chartData.pie.labels, colors:[palette.primary,palette.secondary,'#F59E0B','#EF4444'] }).render();
+    }
+    @if (Model.IncludeDonutCharts)
+    {
+        @:new ApexCharts(document.querySelector("#donutApex"), { chart:{type:'donut',height:300,animations:{enabled:false}}, series:chartData.pie.values, labels:chartData.pie.labels, colors:[palette.primary,palette.secondary,'#F59E0B','#EF4444'] }).render();
+    }
+    @if (Model.IncludeRadarCharts)
+    {
+        @:new ApexCharts(document.querySelector("#radarApex"), { chart:{type:'radar',height:300,animations:{enabled:false}}, series:[{name:'Efficiency',data:chartData.radar.values}], xaxis:{categories:chartData.radar.labels}, colors:[palette.primary]}).render();
+    }
+    @if (Model.IncludeAreaCharts)
+    {
+        @:new ApexCharts(document.querySelector("#areaApex"), { chart:{type:'area',height:300,animations:{enabled:false}}, series:[{name:'Spend ($)',data:chartData.area.values}], xaxis:{categories:chartData.area.labels}, colors:[palette.primary]}).render();
+    }
+
+    // ------------------ CHART.JS ------------------
+    @if (Model.IncludeLineCharts)
+    {
+        @:new Chart(document.getElementById('lineChartJS').getContext('2d'), {type:'line',data:{labels:chartData.line.labels,datasets:[{label:'Spend ($)',data:chartData.line.values,borderColor:palette.primary,backgroundColor:'transparent'}]},options:{responsive:true,maintainAspectRatio:false,animation:false}});
+    }
+    @if (Model.IncludeBarCharts)
+    {
+        @:new Chart(document.getElementById('barChartJS').getContext('2d'), {type:'bar',data:{labels:chartData.bar.labels,datasets:[{label:'AWS Spend',data:chartData.bar.aws,backgroundColor:palette.primary},{label:'Azure Spend',data:chartData.bar.azure,backgroundColor:palette.secondary}]},options:{responsive:true,maintainAspectRatio:false,animation:false,scales:{y:{beginAtZero:true}},plugins:{datalabels:{anchor:'end',align:'end',color:'#000',formatter:(value)=>'$'+value.toLocaleString()}}},plugins:[ChartDataLabels]});
+    }
+    @if (Model.IncludeStackedCharts)
+    {
+        @:new Chart(document.getElementById('stackedChartJS').getContext('2d'), {type:'bar',data:{labels:chartData.bar.labels,datasets:[{label:'AWS',data:chartData.bar.aws,backgroundColor:palette.primary,stack:'total'},{label:'Azure',data:chartData.bar.azure,backgroundColor:palette.secondary,stack:'total'}]},options:{responsive:true,maintainAspectRatio:false,animation:false,scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true}}}});
+    }
+    @if (Model.IncludeMixedCharts)
+    {
+        @:new Chart(document.getElementById('mixedChartJS').getContext('2d'), {data:{labels:chartData.mixed.labels,datasets:[{type:'bar',label:'Actual Spend',data:chartData.mixed.actual,backgroundColor:palette.primary,order:1},{type:'line',label:'Budget',data:chartData.mixed.budget,borderColor:palette.accent,backgroundColor:'transparent',borderWidth:3,pointRadius:5,pointBackgroundColor:palette.accent,order:2}]},options:{responsive:true,maintainAspectRatio:false,animation:false,scales:{y:{beginAtZero:true}}}});
+    }
+    @if (Model.IncludePieCharts)
+    {
+        @:new Chart(document.getElementById('pieChartJS'), {type:'pie',data:{labels:chartData.pie.labels,datasets:[{data:chartData.pie.values,backgroundColor:[palette.primary,palette.secondary,'#F59E0B','#EF4444']}]},options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{datalabels:{color:'#fff',font:{weight:'bold'},formatter:(value,context)=>{const data=context.chart.data.datasets[0].data;const total=data.reduce((a,b)=>a+b,0);return ((value/total)*100).toFixed(1)+'%';}}}},plugins:[ChartDataLabels]});
+    }
+    @if (Model.IncludeDonutCharts)
+    {
+        @:new Chart(document.getElementById('donutChartJS'), {type:'doughnut',data:{labels:chartData.pie.labels,datasets:[{data:chartData.pie.values,backgroundColor:[palette.primary,palette.secondary,'#F59E0B','#EF4444']}]},options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{datalabels:{color:'#fff',font:{weight:'bold'},formatter:(value,context)=>{const data=context.chart.data.datasets[0].data;const total=data.reduce((a,b)=>a+b,0);return ((value/total)*100).toFixed(1)+'%';}}}},plugins:[ChartDataLabels]});
+    }
+    @if (Model.IncludeRadarCharts)
+    {
+        @:new Chart(document.getElementById('radarChartJS'), {type:'radar',data:{labels:chartData.radar.labels,datasets:[{label:'Efficiency',data:chartData.radar.values,backgroundColor:'rgba(10,35,66,0.2)',borderColor:palette.primary,pointBackgroundColor:palette.primary}]},options:{responsive:true,maintainAspectRatio:false,animation:false,scales:{r:{beginAtZero:true}}}});
+    }
+    @if (Model.IncludeAreaCharts)
+    {
+        @:new Chart(document.getElementById('areaChartJS'), {type:'line',data:{labels:chartData.area.labels,datasets:[{label:'Spend ($)',data:chartData.area.values,borderColor:palette.primary,backgroundColor:'rgba(10,35,66,0.2)',fill:true}]},options:{responsive:true,maintainAspectRatio:false,animation:false}});
+    }
+</script>
+</body>
+</html>

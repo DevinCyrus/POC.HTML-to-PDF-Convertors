@@ -1,0 +1,48 @@
+meta {
+  name: Generate HTML From Template  - With Dynamic Chart Data
+  type: http
+  seq: 7
+}
+
+post {
+  url: https://localhost:7075/HTMLtoPDF/generate/html
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "sdk": "puppeteer",
+    "title": "FinOps PDF Report",
+  
+    "includeLineCharts": true,
+    "includeBarCharts": true,
+    "includeStackedCharts": true,
+    "includeMixedCharts": true,
+    "includePieCharts": true,
+    "includeDonutCharts": true,
+    "includeRadarCharts": true,
+    "includeAreaCharts": true,
+  
+    "lineLabels": ["Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb"],
+    "lineValues": [91800, 94000, 96500, 98200, 100400, 102100, 105300],
+  
+    "barLabels": ["Marketing", "Prod Dev", "Operations", "Data Analytics"],
+    "awsBarValues": [15350, 28700, 12500, 9120],
+    "azureBarValues": [12800, 31200, 15650, 8950],
+  
+    "mixedLabels": ["Marketing", "Prod Dev", "Operations", "Data Analytics"],
+    "actualSpend": [28150, 59900, 28150, 18070],
+    "budget": [29000, 61000, 28000, 19000],
+  
+    "cloudVendors": ["AWS", "Azure", "GCP", "Other"],
+    "cloudSpend": [12800, 15350, 31200, 28700],
+  
+    "radarLabels": ["Marketing", "Prod Dev", "Operations", "Data Analytics"],
+    "efficiency": [80, 70, 60, 90],
+  
+    "areaLabels": ["Aug", "Sep", "Oct", "Nov", "Dec", "Jan", "Feb"],
+    "areaValues": [91800, 94000, 96500, 98200, 100400, 102100, 105300]
+  }
+  
+}
