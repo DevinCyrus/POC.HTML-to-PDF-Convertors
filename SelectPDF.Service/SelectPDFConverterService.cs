@@ -32,4 +32,9 @@ public class SelectPDFConverterService : IHtmlToPdfConverter
 	{
 		throw new NotImplementedException();
 	}
+
+	Task<byte[]> IHtmlToPdfConverter.ConvertFromHTMLString(string html)
+	{
+		throw new NotImplementedException();
+	}
 }

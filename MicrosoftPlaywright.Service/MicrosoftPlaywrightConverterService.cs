@@ -72,4 +72,48 @@ public class MicrosoftPlaywrightConverterService : IHtmlToPdfConverter
 
 		return pdfBytes;
 	}
+
+	public async Task<byte[]> ConvertFromHTMLString(string html)
+	{
+		#region Transient headless browser implementation
+		//using var playwright = await Playwright.CreateAsync();
+		//await using var browserContext = await playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+		//{
+		//	Headless = true
+		//});
+		#endregion
+
+		// Create an isolated browser context for each request
+		var browserContext = await _browser.NewContextAsync();
+
+		// Open new page on the new browser context
+		var page = await browserContext.NewPageAsync();
+
+		// Load HTML on the new page
+		await page.SetContentAsync(html);
+
+		// Alternatively, open the page with specific GoToOptions if necessary
+		// https://playwright.dev/dotnet/docs/api/class-page#page-goto
+		//await page.GotoAsync(fileUri, new PageGotoOptions
+		//{
+		//	WaitUntil = WaitUntilState.NetworkIdle
+		//});
+
+		// Had varied results during testing with the below option
+		// I found not using this had best results, but that is most likely directly tied the the HTML of the report and its layout/styling
+		// Consider using screen media to preserve browser layout
+		// https://playwright.dev/dotnet/docs/api/class-page#page-emulate-media
+		// await page.EmulateMediaAsync(new() { Media = Media.Screen });
+
+		// Additional page styling/options can be specified with PagePdfOptions
+		var pageOptions = new PagePdfOptions { Format = "A4" };
+
+		// Generate PDF from loaded HTML
+		var pdfBytes = await page.PdfAsync(pageOptions);
+
+		// Close the browser context and any pages for this session
+		await browserContext.CloseAsync();
+
+		return pdfBytes;
+	}
 }

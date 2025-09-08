@@ -1,5 +1,7 @@
 ﻿using Core.Services.Contracts;
+using DataContracts.RequestDTO;
 using Microsoft.AspNetCore.Mvc;
+using ReportTemplating.Service;
 using System.Diagnostics;
 
 namespace POC.HTML_to_PDF_Convertors.Controllers;
@@ -45,11 +47,13 @@ public class HTMLtoPDFController : ControllerBase
 
 	private string _testReportPath;
 	private PerformanceLogger _perfLogger;
+	private readonly ReportTemplatingService _razor;
 
-	public HTMLtoPDFController(IHtmlToPdfConverterFactory factory, PerformanceLogger perfLogger)
+	public HTMLtoPDFController(IHtmlToPdfConverterFactory factory, PerformanceLogger perfLogger, ReportTemplatingService razor)
 	{
 		_factory = factory;
 		_perfLogger = perfLogger;
+		_razor = razor;
 
 		_testReportPath = _cleanedCloudOverviewReportPath;
 	}
@@ -157,4 +161,34 @@ public class HTMLtoPDFController : ControllerBase
 	//	var pdfBytes = await converter.ConvertFromHTMLFile(_testReportPath);
 	//	return File(pdfBytes, "application/pdf", outputFileName + ".pdf");
 	//}
+
+	[HttpPost("generate/pdf")]
+	public async Task<IActionResult> GenerateReportPDF([FromBody] ReportRequest request)
+	{
+		// 1. Render Razor template to string
+		var html = await _razor.RenderAsync("Demo Razor Report.cshtml", request);
+
+		// test template with dynamic chart data - use ReportRequestWithChartData as request model for this
+		//var html = await _razor.RenderAsync("Demo Razor Report - Dynamic Data Sets.cshtml", request);
+
+		// 2. Convert HTML to PDF (Puppeteer as example)
+		var converter = _factory.Get(request.SDK);
+		var pdfBytes = await converter.ConvertFromHTMLString(html);
+
+		// 3. Return file
+		return File(pdfBytes, "application/pdf", request.Title + ".pdf");
+	}
+
+	[HttpPost("generate/html")]
+	public async Task<IActionResult> GenerateReportHTML([FromBody] ReportRequest request)
+	{
+		// 1. Render Razor template to string
+		var html = await _razor.RenderAsync("Demo Razor Report - Dynamic Data Sets.cshtml", request);
+
+		// 2. Convert string to byte[] using UTF-8 encoding
+		var htmlBytes = System.Text.Encoding.UTF8.GetBytes(html);
+
+		// 3. Return file as HTML
+		return File(htmlBytes, "text/html", request.Title + ".html");
+	}
 }

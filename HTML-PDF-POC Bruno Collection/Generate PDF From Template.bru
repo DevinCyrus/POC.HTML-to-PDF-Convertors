@@ -1,0 +1,26 @@
+meta {
+  name: Generate PDF From Template
+  type: http
+  seq: 5
+}
+
+post {
+  url: https://localhost:7075/HTMLtoPDF/generate/pdf
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "sdk": "puppeteer",
+    "title": "FinOps PDF Report",
+    "includeLineCharts": true,
+    "includeBarCharts": true,
+    "includeStackedCharts": true,
+    "includeMixedCharts": true,
+    "includePieCharts": true,
+    "includeDonutCharts": true,
+    "includeRadarCharts": true,
+    "includeAreaCharts": true
+  }
+}

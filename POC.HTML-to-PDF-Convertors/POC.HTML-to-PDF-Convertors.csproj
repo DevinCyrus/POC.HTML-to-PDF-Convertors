@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -6,6 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>POC.HTML_to_PDF_Convertors</RootNamespace>
     <UserSecretsId>c0d30082-50ca-4771-90aa-f651027235d8</UserSecretsId>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <CopyRefAssembliesToPublishDirectory>true</CopyRefAssembliesToPublishDirectory>
   </PropertyGroup>
 
   <ItemGroup>
@@ -64,11 +66,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Core.DataContracts\DataContracts.csproj" />
     <ProjectReference Include="..\Core\Core.csproj" />
     <ProjectReference Include="..\IronPDF.Service\IronPDF.Service.csproj" />
     <ProjectReference Include="..\MicrosoftPlaywright.Service\MicrosoftPlaywright.Service.csproj" />
     <ProjectReference Include="..\Puppeteer.Service\PuppeteerSharp.Service.csproj" />
+    <ProjectReference Include="..\ReportTemplating.Service\ReportTemplating.Service.csproj" />
     <ProjectReference Include="..\SelectPDF.Service\SelectPDF.Service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Report Templates\Demo Razor Report - Dynamic Data Sets.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="Report Templates\Demo Razor Report.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
