@@ -48,7 +48,9 @@ Note: IronPDF is commercial software and requires a valid license for production
 ---
 
 # POC Findings and Outcomes
-
+<details>
+<summary>Expand for Findings and Outcomes</summary>
+<br>
 The primary goal of this POC was to assess the accuracy, consistency, and maintainability of various HTML-to-PDF conversion tools. The focus was on ensuring that dynamic javascript, as well as visual elements such as charts, tables, and styling were faithfully represented, while also considering performance, deployment compatibility, cost/licensing and long-term support for the chosen solution.
 
 ### [Link to POC Repository](https://github.com/DevinCyrus/POC.HTML-to-PDF-Convertors)
@@ -281,3 +283,4 @@ I would definitely suggest going with either **Playwright** or **PuppeteerSharp*
 Playwright does seem to offer the most fine grained control f its Chromium browser, but I could not find a need for that during this POC.
 
 It is also important to note that all of these packages get implemented in much the same way, so it shouldn’t be too much of a process to switch to a different SDK if something arises further down the line that was not discovered in this POC.
+</details>
