@@ -5,7 +5,7 @@ The project evaluates **PuppeteerSharp**, **PlaywrightSharp**, and **IronPDF**, 
 
 ---
 
-## Overview
+### Overview
 
 The goal of this POC is to:
 
@@ -15,7 +15,7 @@ The goal of this POC is to:
 
 ---
 
-## SDKs Tested
+### SDKs Tested
 
 ### PuppeteerSharp
 - Wraps Chromium browser automation.  
@@ -33,14 +33,14 @@ The goal of this POC is to:
 
 ---
 
-## Performance Logging
+### Performance Logging
 
 PDF generation metrics (duration + output size) are written to PdfPerfLogs/perf-results.csv.
 This folder is ignored by Git via .gitignore.
 
 ---
 
-##License
+### License
 
 MIT (for this POC code).
 Note: IronPDF is commercial software and requires a valid license for production use.
