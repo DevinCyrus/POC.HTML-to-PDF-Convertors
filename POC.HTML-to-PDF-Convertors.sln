@@ -21,9 +21,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicrosoftPlaywright.Service
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SelectPDF.Service", "SelectPDF.Service\SelectPDF.Service.csproj", "{302F6F00-5383-431C-B6EB-23153E1F44F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportTemplating.Service", "ReportTemplating.Service\ReportTemplating.Service.csproj", "{D352890C-970F-4A16-B157-CFBC54709FFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportTemplating.Service", "ReportTemplating.Service\ReportTemplating.Service.csproj", "{D352890C-970F-4A16-B157-CFBC54709FFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataContracts", "Core.DataContracts\DataContracts.csproj", "{B0B63838-C617-4669-BE1A-8601023DD0B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataContracts", "Core.DataContracts\DataContracts.csproj", "{B0B63838-C617-4669-BE1A-8601023DD0B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RazorComponents.ReportTemplating.Service", "RazorComponents.ReportTemplating.Service\RazorComponents.ReportTemplating.Service.csproj", "{96CF872E-9214-4728-92D3-110788CB6DA5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{B0B63838-C617-4669-BE1A-8601023DD0B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0B63838-C617-4669-BE1A-8601023DD0B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0B63838-C617-4669-BE1A-8601023DD0B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96CF872E-9214-4728-92D3-110788CB6DA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96CF872E-9214-4728-92D3-110788CB6DA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96CF872E-9214-4728-92D3-110788CB6DA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96CF872E-9214-4728-92D3-110788CB6DA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +83,7 @@ Global
 		{302F6F00-5383-431C-B6EB-23153E1F44F2} = {55733D28-F443-4CF6-A56E-E3C796AAC1A3}
 		{D352890C-970F-4A16-B157-CFBC54709FFC} = {55733D28-F443-4CF6-A56E-E3C796AAC1A3}
 		{B0B63838-C617-4669-BE1A-8601023DD0B0} = {D18DDB8D-BAEF-4439-B7A6-348F385830AE}
+		{96CF872E-9214-4728-92D3-110788CB6DA5} = {55733D28-F443-4CF6-A56E-E3C796AAC1A3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E223DFD5-3D9E-438B-9B72-ECD3D5D17278}

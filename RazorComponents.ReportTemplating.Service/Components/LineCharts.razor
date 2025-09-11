@@ -1,0 +1,32 @@
+﻿@using DataContracts.ComponentModels
+@using System.Text.Json
+@code {
+	[Parameter] public LineChartModel Model { get; set; } = default!;
+}
+
+<section class="section chart-card">
+	<h2>[ApexCharts] @Model.Title</h2>
+	<div id="lineApex"></div>
+</section>
+<section class="section chart-card">
+	<h2>[Chart.js] @Model.Title</h2>
+	<canvas id="lineChartJS"></canvas>
+</section>
+
+<script>
+	new ApexCharts(document.querySelector("#lineApex"), {
+		chart: { type: 'line', height: 280, animations: { enabled: false } },
+		series: [{ name: 'Spend ($)', data: @JsonSerializer.Serialize(Model.Data.Values)}],
+		xaxis: { categories: @JsonSerializer.Serialize(Model.Data.Labels)},
+		colors: ['#0A2342']
+	}).render();
+
+	new Chart(document.getElementById('lineChartJS').getContext('2d'), {
+		type: 'line',
+		data: {
+			labels: @JsonSerializer.Serialize(Model.Data.Labels),
+			datasets: [{ label: 'Spend ($)', data: @JsonSerializer.Serialize(Model.Data.Values), borderColor: '#0A2342', backgroundColor: 'transparent' }]
+		},
+		options: { responsive: true, maintainAspectRatio: false, animation: false }
+	});
+</script>
